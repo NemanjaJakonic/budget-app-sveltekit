@@ -1,24 +1,23 @@
 <script>
 	export let data;
 	import { enhance } from '$app/forms';
-	import { onMount } from "svelte";
+	import { onMount } from 'svelte';
 	import { invalidateAll } from '$app/navigation';
 
 	const { session, transactions, supabase } = data;
 
 	onMount(async () => {
-		console.log('loaded')
+		console.log('loaded');
 		console.log(transactions);
-    await invalidateAll();
-  });
+		await invalidateAll();
+	});
 
 	const total_balance = transactions.reduce((accumulator, object) => {
 		return accumulator + object.amount;
 	}, 0);
-	
 
 	async function deleteTransaction({ request }) {
-		const session = await getSession()
+		const session = await getSession();
 		const formData = await request.formData();
 		const id = formData.get('id');
 		const { error } = await supabase
@@ -181,32 +180,26 @@
 			</div>
 			<ul>
 				{#each data.transactions as transaction}
-					<li class="flex items-center gap-4 p-2 border-b">
+					<li class="flex gap-4 items-center p-2 border-b">
 						<span class="flex-1">{transaction.name}</span>
 						<span class="flex-1">{transaction.amount}</span>
 						<span>
 							<a href="/edit-transaction/{transaction.id}">
-								
-							
-							<svg
-								width="16"
-								height="16"
-								viewBox="0 0 16 16"
-								fill="none"
-								xmlns="http://www.w3.org/2000/svg"
-							>
-								<path
-									d="M10.733 2.56C11.0921 2.20103 11.5791 1.99942 12.0869 1.99951C12.5946 1.99961 13.0815 2.2014 13.4405 2.5605C13.7995 2.91961 14.0011 3.4066 14.001 3.91436C14.0009 4.42211 13.7991 4.90903 13.44 5.268L12.707 6.002L9.999 3.294L10.733 2.561V2.56ZM9.293 4.001L3.337 9.955C3.15621 10.1359 3.01996 10.3564 2.939 10.599L2.025 13.342C1.99555 13.4301 1.99121 13.5246 2.01247 13.615C2.03373 13.7054 2.07975 13.7881 2.14536 13.8538C2.21098 13.9196 2.2936 13.9657 2.38397 13.9871C2.47434 14.0085 2.56888 14.0043 2.657 13.975L5.4 13.06C5.643 12.98 5.863 12.843 6.044 12.662L12 6.709L9.292 4L9.293 4.001Z"
-									fill="#06B6D4"
-								/>
-							</svg>
-						</a>
+								<svg
+									width="16"
+									height="16"
+									viewBox="0 0 16 16"
+									fill="none"
+									xmlns="http://www.w3.org/2000/svg"
+								>
+									<path
+										d="M10.733 2.56C11.0921 2.20103 11.5791 1.99942 12.0869 1.99951C12.5946 1.99961 13.0815 2.2014 13.4405 2.5605C13.7995 2.91961 14.0011 3.4066 14.001 3.91436C14.0009 4.42211 13.7991 4.90903 13.44 5.268L12.707 6.002L9.999 3.294L10.733 2.561V2.56ZM9.293 4.001L3.337 9.955C3.15621 10.1359 3.01996 10.3564 2.939 10.599L2.025 13.342C1.99555 13.4301 1.99121 13.5246 2.01247 13.615C2.03373 13.7054 2.07975 13.7881 2.14536 13.8538C2.21098 13.9196 2.2936 13.9657 2.38397 13.9871C2.47434 14.0085 2.56888 14.0043 2.657 13.975L5.4 13.06C5.643 12.98 5.863 12.843 6.044 12.662L12 6.709L9.292 4L9.293 4.001Z"
+										fill="#06B6D4"
+									/>
+								</svg>
+							</a>
 						</span>
-						<form
-							action="?/deleteTransaction"
-							method="post"
-							use:enhance
-						>
+						<form action="?/deleteTransaction" method="post" use:enhance>
 							<input type="hidden" name="id" value={transaction.id} />
 							<button type="submit">
 								<svg
@@ -233,13 +226,13 @@
 		<div class="flex justify-end">
 			<a
 				href="/add-transaction"
-				class="flex justify-center items-center w-24 border border-primary py-2.5 px-4 rounded-md bg-primary"
+				class="flex justify-center items-center px-4 py-2.5 w-24 rounded-md border border-primary bg-primary"
 				>Add</a
 			>
 		</div>
 	</div>
 {:else}
-	<div class="absolute inset-x-0 flex justify-center top-64">
+	<div class="flex absolute inset-x-0 top-64 justify-center">
 		<svg
 			width="160"
 			height="160"
@@ -306,15 +299,15 @@
 			/>
 		</svg>
 	</div>
-	<div class="absolute inset-x-0 flex justify-center gap-12 bottom-20">
+	<div class="flex absolute inset-x-0 bottom-20 gap-12 justify-center">
 		<a
 			href="/register"
-			class="flex justify-center items-center w-24 border border-primary py-2.5 px-4 rounded-md shadow-lg"
+			class="flex justify-center items-center px-4 py-2.5 w-24 rounded-md border shadow-lg border-primary"
 			><span class="shadow-lg">Sign Up</span></a
 		>
 		<a
 			href="/login"
-			class="flex justify-center items-center w-24 border border-primary py-2.5 px-4 rounded-md bg-primary"
+			class="flex justify-center items-center px-4 py-2.5 w-24 rounded-md border border-primary bg-primary"
 			>Login</a
 		>
 	</div>
