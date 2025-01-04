@@ -18,12 +18,12 @@
 	}
 </script>
 
-<div class="min-h-screen">
+<div class="pt-20">
 	<form
 		action="?/login"
 		method="post"
 		use:enhance={handleSubmit}
-		class="p-4 mx-auto mt-20 max-w-md rounded-3xl md:p-8 bg-gray-800/50"
+		class="p-4 mx-auto max-w-md rounded-3xl md:p-8 bg-gray-800/50"
 	>
 		<h1 class="mb-12 text-2xl font-semibold text-primary">Welcome</h1>
 

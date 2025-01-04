@@ -57,14 +57,14 @@
 	});
 </script>
 
-<div class="min-h-screen">
+<div class="pt-10 md:pt-20">
 	<form
 		action="?/addTransaction"
 		method="post"
 		use:enhance={handleSubmit}
-		class="p-4 mx-auto mt-20 max-w-md rounded-3xl md:p-8 bg-gray-800/50"
+		class="p-4 mx-auto max-w-md rounded-3xl md:p-8 bg-gray-800/50"
 	>
-		<h1 class="mb-10 text-2xl font-semibold text-primary">Add Transaction</h1>
+		<h1 class="mb-6 text-2xl font-semibold text-primary">Add Transaction</h1>
 
 		<div class="mb-6 h-12">
 			<Error message={errorMessage} />
