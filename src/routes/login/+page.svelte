@@ -1,5 +1,7 @@
 <script>
 	import { enhance } from '$app/forms';
+	import Input from '../../lib/components/Input.svelte';
+	import Error from '../../lib/components/Error.svelte';
 
 	let loading = false;
 	let errorMessage = '';
@@ -18,48 +20,26 @@
 	}
 </script>
 
-<div class="pt-20">
+<div class="pt-10 md:pt-20">
 	<form
 		action="?/login"
 		method="post"
 		use:enhance={handleSubmit}
-		class="p-4 mx-auto max-w-md rounded-3xl md:p-8 bg-gray-800/50"
+		class="p-4 mx-auto max-w-md rounded-xl md:p-8 bg-gray-800/50"
 	>
-		<h1 class="mb-12 text-2xl font-semibold text-primary">Welcome</h1>
+		<h1 class="mb-4 text-2xl font-semibold text-primary">Welcome</h1>
 
-		{#if errorMessage}
-			<div class="p-4 mb-6 text-sm text-center text-red-400 rounded-xl bg-red-900/20">
-				{errorMessage}
-			</div>
-		{/if}
+		<div class="mb-2 h-10">
+			<Error message={errorMessage} />
+		</div>
 
 		<div class="flex flex-col gap-6">
-			<div class="space-y-2">
-				<label for="email" class="text-sm text-gray-300">Username Or Email</label>
-				<input
-					id="email"
-					class="p-3 w-full text-gray-100 rounded-xl border border-gray-700 transition-colors outline-none bg-gray-900/50 focus:border-primary"
-					type="text"
-					name="email"
-					placeholder="example@example.com"
-					disabled={loading}
-				/>
-			</div>
+			<Input name="email" type="text" placeholder="example@example.com" disabled={loading} />
 
-			<div class="space-y-2">
-				<label for="password" class="text-sm text-gray-300">Password</label>
-				<input
-					id="password"
-					class="p-3 w-full text-gray-100 rounded-xl border border-gray-700 transition-colors outline-none bg-gray-900/50 focus:border-primary"
-					type="password"
-					name="password"
-					placeholder="••••••••"
-					disabled={loading}
-				/>
-			</div>
+			<Input name="password" type="password" placeholder="••••••••" disabled={loading} />
 
 			<button
-				class="relative py-3 mt-4 w-full text-white rounded-xl shadow-lg transition-all duration-300 bg-primary hover:brightness-75 disabled:opacity-70 shadow-primary/20"
+				class="relative py-2 mt-4 w-full text-white rounded shadow-lg transition-all duration-300 md:py-3 bg-primary hover:brightness-75 disabled:opacity-70 shadow-primary/20"
 				disabled={loading}
 			>
 				{#if loading}
@@ -100,7 +80,7 @@
 
 			<a
 				href="/register"
-				class="py-3 w-full text-center text-gray-300 rounded-xl border border-gray-700 transition-colors bg-gray-900/50 hover:border-primary"
+				class="py-2 w-full text-center text-gray-300 rounded border border-gray-700 transition-colors md:py-3 bg-gray-900/50 hover:border-primary"
 			>
 				Sign Up
 			</a>

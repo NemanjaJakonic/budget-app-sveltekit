@@ -4,19 +4,43 @@
 	import { onMount } from 'svelte';
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
-	$: ({ rates } = $page.data);
+
+	let rates = data.rates;
+	let total_balance = 0;
+
+	function convertToRSD(price) {
+		const currencyFormat = new Intl.NumberFormat('sr-Latn-RS', {
+			style: 'currency',
+			currency: 'EUR'
+		});
+		return currencyFormat.format(price).replace('€', 'RSD');
+	}
 
 	const { session, transactions, supabase } = data;
 
 	onMount(async () => {
-		console.log(rates);
-		console.log(transactions);
+		total_balance = transactions.reduce((accumulator, object) => {
+			let amount = object.amount;
+			switch (object.currency) {
+				case 'EUR':
+					amount *= rates.RSD;
+					break;
+				case 'USD':
+					amount *= rates.USD * rates.RSD;
+					break;
+				default:
+					amount = amount;
+					break;
+			}
+			if (object.type === 'income') {
+				return accumulator + amount;
+			} else if (object.type === 'expense') {
+				return accumulator - amount;
+			}
+		}, 0);
+
 		await invalidateAll();
 	});
-
-	const total_balance = transactions.reduce((accumulator, object) => {
-		return accumulator + object.amount;
-	}, 0);
 
 	async function deleteTransaction({ request }) {
 		const session = await getSession();
@@ -42,22 +66,22 @@
 		</form>
 	</div>
 
-	<p>
+	<p class="h-8">
 		{#if rates}
 			Današnji EUR kurs: {rates.RSD}
 		{/if}
 	</p>
-	<div class="w-full border rounded-md h-28 border-primary bg-[#ea861a]/[.2] shadow-lg">
+	<div class="w-full h-28 rounded-md border shadow-lg border-primary">
 		<div class="flex justify-between p-4">
 			<div>
-				<h2 class="text-3xl font-extrabold uppercase">Total balance</h2>
+				<p class="text-base font-extrabold uppercase">Total balance</p>
 				<h2 class="text-3xl font-extrabold text-right uppercase">
-					{total_balance}
+					{convertToRSD(total_balance)}
 				</h2>
 			</div>
 		</div>
 
-		<div class="flex gap-4 mt-4">
+		<!-- <div class="flex gap-4 mt-4">
 			<div
 				class="flex-1 border rounded-md h-28 border-[#84CB5D] bg-[#84cb5d]/[.36] shadow-lg flex justify-center items-center"
 			>
@@ -74,19 +98,21 @@
 			<div class="flex justify-end p-4">
 				<h2 class="text-3xl font-extrabold uppercase">Monthly balance</h2>
 			</div>
-		</div>
+		</div> -->
 
 		<div class="my-10">
-			<div class="flex justify-between mb-4">
+			<!-- <div class="flex justify-between mb-4">
 				<span class="font-bold">Recent</span>
 				<span class="font-bold">View All</span>
-			</div>
+			</div> -->
 			<ul>
 				{#each data.transactions as transaction}
 					<li class="flex gap-4 items-center p-2 border-b">
-						<span class="flex-1">{transaction.name}</span>
+						<span class="flex-1 hover:text-primary">
+							<a href="/edit-transaction/{transaction.id}">{transaction.name}</a></span
+						>
 						<span class="flex-1">{transaction.amount}</span>
-						<span>
+						<!-- <span>
 							<a href="/edit-transaction/{transaction.id}">
 								<svg
 									width="16"
@@ -101,7 +127,7 @@
 									/>
 								</svg>
 							</a>
-						</span>
+						</span> -->
 						<form action="?/deleteTransaction" method="post" use:enhance>
 							<input type="hidden" name="id" value={transaction.id} />
 							<button type="submit">

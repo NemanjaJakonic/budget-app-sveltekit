@@ -2,11 +2,10 @@
 	import { enhance } from '$app/forms';
 	import { onDestroy } from 'svelte';
 	import Error from '$lib/components/Error.svelte';
+	import Input from '$lib/components/Input.svelte';
 
 	let loading = false;
 	let errorMessage = '';
-	let name = '';
-	let amount = '';
 	let errorTimeout;
 
 	function setTemporaryError(message) {
@@ -17,28 +16,8 @@
 		}, 3000);
 	}
 
-	function validateForm() {
-		if (!name.trim()) {
-			setTemporaryError('Name is required');
-			return false;
-		}
-
-		const numAmount = Number(amount);
-		if (isNaN(numAmount) || numAmount <= 0) {
-			setTemporaryError('Please enter a valid amount greater than 0');
-			return false;
-		}
-
-		errorMessage = '';
-		return true;
-	}
-
 	function handleSubmit() {
 		return async ({ result, update }) => {
-			if (!validateForm()) {
-				return;
-			}
-
 			loading = true;
 
 			if (result.type === 'failure') {
@@ -58,40 +37,52 @@
 </script>
 
 <div class="pt-10 md:pt-20">
+	<div class="flex justify-between items-center mb-4">
+		<a href="/">
+			<span class="text-primary">
+				<svg
+					class="fill-current"
+					width="21"
+					height="18"
+					viewBox="0 0 21 18"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+						d="M11.5642 1L0.999999 8.99685M0.999999 8.99685L11.5642 17M0.999999 8.99685L20 8.99686"
+						stroke="#F1FFF3"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					/>
+				</svg>
+			</span>
+		</a>
+
+		<h1 class="text-xl font-semibold md:text-2xl text-primary">Add Transaction</h1>
+		<span />
+	</div>
 	<form
 		action="?/addTransaction"
 		method="post"
 		use:enhance={handleSubmit}
-		class="p-4 mx-auto max-w-md rounded-3xl md:p-8 bg-gray-800/50"
+		class="p-4 mx-auto max-w-md rounded-lg md:p-8 bg-gray-800/50"
 	>
-		<h1 class="mb-6 text-2xl font-semibold text-primary">Add Transaction</h1>
-
-		<div class="mb-6 h-12">
+		<div class="mb-2 h-10">
 			<Error message={errorMessage} />
 		</div>
 
-		<div class="flex flex-col gap-6">
-			<div class="space-y-2">
-				<label for="name" class="text-sm text-gray-300">Name</label>
-				<input
-					id="name"
-					bind:value={name}
-					class="p-3 w-full text-gray-100 rounded-xl border border-gray-700 transition-colors outline-none bg-gray-900/50 focus:border-primary"
-					type="text"
-					name="name"
-					placeholder="Name"
-				/>
-			</div>
+		<div class="flex flex-col gap-4 md:gap-6">
+			<Input name="name" type="text" placeholder="Name" />
 
 			<div class="space-y-2">
 				<label for="type" class="text-sm text-gray-300">Type</label>
 				<div
-					class="grid grid-cols-2 gap-2 p-3 w-full text-gray-100 rounded-xl border border-gray-700 bg-gray-900/50"
+					class="grid grid-cols-2 gap-2 p-1.5 w-full text-gray-100 rounded border border-gray-700 md:p-3 bg-gray-900/50"
 				>
 					<label class="relative">
 						<input type="radio" name="type" value="income" class="sr-only peer" checked />
 						<div
-							class="p-2 text-center rounded-lg transition-all cursor-pointer peer-checked:bg-primary peer-checked:text-white hover:bg-primary/20"
+							class="p-1 text-center rounded transition-all cursor-pointer md:p-2 peer-checked:bg-primary peer-checked:text-white hover:bg-primary/20"
 						>
 							Income
 						</div>
@@ -100,7 +91,7 @@
 					<label class="relative">
 						<input type="radio" name="type" value="expense" class="sr-only peer" />
 						<div
-							class="p-2 text-center rounded-lg transition-all cursor-pointer peer-checked:bg-primary peer-checked:text-white hover:bg-primary/20"
+							class="p-1 text-center rounded transition-all cursor-pointer md:p-2 peer-checked:bg-primary peer-checked:text-white hover:bg-primary/20"
 						>
 							Expense
 						</div>
@@ -108,23 +99,46 @@
 				</div>
 			</div>
 
+			<Input name="amount" type="text" placeholder="Amount" />
+
 			<div class="space-y-2">
-				<label for="amount" class="text-sm text-gray-300">Amount</label>
-				<input
-					id="amount"
-					bind:value={amount}
-					class="p-3 w-full text-gray-100 rounded-xl border border-gray-700 transition-colors outline-none bg-gray-900/50 focus:border-primary"
-					type="text"
-					name="amount"
-					placeholder="Amount"
-				/>
+				<label for="type" class="text-sm text-gray-300">Currency</label>
+				<div
+					class="grid grid-cols-3 gap-2 p-1.5 w-full text-gray-100 rounded border border-gray-700 md:p-3 bg-gray-900/50"
+				>
+					<label class="relative">
+						<input type="radio" name="currency" value="RSD" class="sr-only peer" checked />
+						<div
+							class="p-1 text-center rounded transition-all cursor-pointer md:p-2 peer-checked:bg-primary peer-checked:text-white hover:bg-primary/20"
+						>
+							RSD
+						</div>
+					</label>
+
+					<label class="relative">
+						<input type="radio" name="currency" value="EUR" class="sr-only peer" />
+						<div
+							class="p-1 text-center rounded transition-all cursor-pointer md:p-2 peer-checked:bg-primary peer-checked:text-white hover:bg-primary/20"
+						>
+							EUR
+						</div>
+					</label>
+					<label class="relative">
+						<input type="radio" name="currency" value="USD" class="sr-only peer" />
+						<div
+							class="p-1 text-center rounded transition-all cursor-pointer md:p-2 peer-checked:bg-primary peer-checked:text-white hover:bg-primary/20"
+						>
+							USD
+						</div>
+					</label>
+				</div>
 			</div>
 
 			<div class="space-y-2">
 				<label for="date" class="text-sm text-gray-300">Date</label>
 				<input
 					id="date"
-					class="p-3 w-full text-gray-100 rounded-xl border border-gray-700 transition-colors outline-none bg-gray-900/50 focus:border-primary [color-scheme:dark]"
+					class="p-2 md:p-3 w-full text-gray-100 rounded border border-gray-700 transition-colors outline-none bg-gray-900/50 focus:border-primary [color-scheme:dark]"
 					type="date"
 					name="date"
 					value={new Date().toISOString().split('T')[0]}
@@ -132,7 +146,7 @@
 			</div>
 
 			<button
-				class="relative py-3 mt-4 w-full text-white rounded-xl shadow-lg transition-all duration-300 bg-primary hover:bg-primary/60 disabled:opacity-70 shadow-primary/20"
+				class="relative py-2 mt-4 w-full text-white rounded shadow-lg transition-all duration-300 md:py-3 bg-primary hover:bg-primary/60 disabled:opacity-70 shadow-primary/20"
 				disabled={loading}
 			>
 				{#if loading}
