@@ -1,6 +1,6 @@
 <script>
 	import { enhance } from '$app/forms';
-	import { onDestroy } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import Error from '$lib/components/Error.svelte';
 	import Input from '$lib/components/Input.svelte';
 
@@ -25,11 +25,17 @@
 				loading = false;
 			}
 
-			if (result.type === 'redirect') {
-				await update();
-			}
+			await update();
+			loading = false;
+			// if (result.type === 'redirect') {
+
+			// }
 		};
 	}
+
+	onMount(() => {
+		document.getElementById('name').focus();
+	});
 
 	onDestroy(() => {
 		if (errorTimeout) clearTimeout(errorTimeout);

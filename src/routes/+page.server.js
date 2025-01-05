@@ -7,7 +7,8 @@ export async function load({ locals: { getSession } }) {
 		const { data, error } = await supabase
 			.from('transactions')
 			.select()
-			.eq('user_id', session.user.id);
+			.eq('user_id', session.user.id)
+			.order('date', { ascending: false });
 		if (error) {
 			console.log(error);
 		}

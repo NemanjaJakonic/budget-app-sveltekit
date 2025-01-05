@@ -1,13 +1,22 @@
 <script>
 	export let data;
+	import Footer from '$lib/components/Footer.svelte';
 	import { enhance } from '$app/forms';
 	import { onMount } from 'svelte';
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { Chart, registerables } from 'chart.js';
+	Chart.register(...registerables);
 
 	let rates = data.rates;
-	let totalBalanceRSD = 0;
+	let totalBalanceRSD = 2937000;
 	let totalBalanceEUR = 0;
+
+	let monthlyData = {
+		labels: [],
+		income: [],
+		expenses: []
+	};
 
 	function convertToRSD(amount) {
 		const currencyFormat = new Intl.NumberFormat('sr-Latn-RS', {
@@ -36,7 +45,7 @@
 	const { session, transactions, supabase } = data;
 
 	onMount(async () => {
-		totalBalanceRSD = transactions.reduce((accumulator, object) => {
+		totalBalanceRSD += transactions.reduce((accumulator, object) => {
 			let amount = object.amount;
 			switch (object.currency) {
 				case 'EUR':
@@ -58,6 +67,54 @@
 
 		totalBalanceEUR = totalBalanceRSD / rates.RSD;
 
+		const currentYear = new Date().getFullYear();
+		const monthlyTotals = Array.from({ length: 12 }, () => ({ income: 0, expenses: 0 }));
+
+		data.transactions.forEach((transaction) => {
+			const transactionDate = new Date(transaction.date);
+			if (transactionDate.getFullYear() === currentYear) {
+				const month = transactionDate.getMonth();
+				if (transaction.type === 'income') {
+					monthlyTotals[month].income += transaction.amount;
+				} else if (transaction.type === 'expense') {
+					monthlyTotals[month].expenses += transaction.amount;
+				}
+			}
+		});
+
+		monthlyData.labels = monthlyTotals.map((_, index) =>
+			new Date(currentYear, index).toLocaleString('default', { month: 'long' })
+		);
+		monthlyData.income = monthlyTotals.map((total) => total.income);
+		monthlyData.expenses = monthlyTotals.map((total) => total.expenses);
+
+		const ctx = document.getElementById('monthlyChart').getContext('2d');
+		new Chart(ctx, {
+			type: 'bar',
+			data: {
+				labels: monthlyData.labels,
+				datasets: [
+					{
+						label: 'Income',
+						data: monthlyData.income,
+						backgroundColor: 'rgba(75, 192, 192, 0.6)'
+					},
+					{
+						label: 'Expenses',
+						data: monthlyData.expenses,
+						backgroundColor: 'rgba(255, 99, 132, 0.6)'
+					}
+				]
+			},
+			options: {
+				scales: {
+					y: {
+						beginAtZero: true
+					}
+				}
+			}
+		});
+
 		await invalidateAll();
 	});
 
@@ -75,6 +132,17 @@
 		}
 		await invalidateAll();
 	}
+
+	let isDropdownOpen = {}; // Change to an object to track dropdown states by transaction ID
+
+	const handleDropdownClick = (transactionId) => {
+		isDropdownOpen[transactionId] = !isDropdownOpen[transactionId]; // Toggle state for the specific transaction
+	};
+
+	const handleDropdownFocusLoss = ({ relatedTarget, currentTarget }) => {
+		// ... existing code ...
+		isDropdownOpen = {}; // Close all dropdowns when focus is lost
+	};
 </script>
 
 {#if data.session}
@@ -100,7 +168,7 @@
 			</button>
 		</form>
 	</div>
-	<div class="p-4 mx-auto w-full max-w-lg rounded-lg md:p-8 bg-gray-800/50">
+	<div class="p-4 mx-auto w-full max-w-xl rounded-lg md:p-8 bg-gray-800/50">
 		<p class="h-8">
 			{#if rates}
 				Današnji EUR kurs: <span class="text-primary">{rates.RSD}</span>
@@ -120,57 +188,19 @@
 		</div>
 	</div>
 
-	<!-- <div class="flex gap-4 mt-4">
-			<div
-				class="flex-1 border rounded-md h-28 border-[#84CB5D] bg-[#84cb5d]/[.36] shadow-lg flex justify-center items-center"
-			>
-				Monthly Income
-			</div>
-			<div
-				class="flex-1 border rounded-md shadow-lg h-28 border-[#D57E78] bg-[#D57E78]/[.36] flex justify-center items-center"
-			>
-				Monthly Expense
-			</div>
-		</div>
-
-		<div class="w-full border rounded-md h-28 border-[#06B6D4] bg-[#06B6D4]/[.2] shadow-lg mt-4">
-			<div class="flex justify-end p-4">
-				<h2 class="text-3xl font-extrabold uppercase">Monthly balance</h2>
-			</div>
-		</div> -->
-
-	<div class="flex justify-end py-6 mx-auto max-w-lg">
-		<a
-			href="/add-transaction"
-			class="flex justify-center items-center px-4 py-2 font-semibold text-white rounded shadow-lg transition-all duration-300 w-fit md:py-3 bg-primary hover:bg-primary/60 disabled:opacity-70 shadow-primary/20"
-		>
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				fill="none"
-				viewBox="0 0 24 24"
-				stroke-width="1.5"
-				stroke="currentColor"
-				class="size-6"
-			>
-				<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-			</svg>
-			<span> Add Transaction </span>
-		</a>
+	<div class="mx-auto mt-4 w-full max-w-xl min-h-48 chart-container">
+		<canvas id="monthlyChart" />
 	</div>
 
-	<h3 class="pb-2 text-xl font-bold text-center text-primary">Transactions</h3>
-	<div class="p-4 mx-auto w-full max-w-lg rounded-lg md:p-8 bg-gray-800/50">
-		<!-- <div class="flex justify-between mb-4">
-				<span class="font-bold">Recent</span>
-				<span class="font-bold">View All</span>
-			</div> -->
-
+	<h3 class="py-2 text-xl font-bold text-center text-primary">Transactions</h3>
+	<div class="py-4 mx-auto w-full max-w-xl rounded-lg md:py-8">
 		<ul>
 			{#each data.transactions as transaction}
-				<li class="flex gap-4 items-center py-2 border-b">
-					<span class="flex-1 hover:text-primary">
-						<a href="/edit-transaction/{transaction.id}">{transaction.name}</a></span
-					>
+				<li class="flex gap-4 items-center p-3 my-3 rounded-lg bg-gray-800/50">
+					<div class="flex-1 hover:text-primary">
+						<a href="/edit-transaction/{transaction.id}">{transaction.name}</a>
+						<p class="text-xs">{transaction.date}</p>
+					</div>
 					<span
 						class="flex-1 font-semibold text-right {transaction.type === 'expense'
 							? 'text-red-400'
@@ -184,25 +214,9 @@
 							{convertToRSD(transaction.amount)}
 						{/if}
 					</span>
-					<!-- <span>
-							<a href="/edit-transaction/{transaction.id}">
-								<svg
-									width="16"
-									height="16"
-									viewBox="0 0 16 16"
-									fill="none"
-									xmlns="http://www.w3.org/2000/svg"
-								>
-									<path
-										d="M10.733 2.56C11.0921 2.20103 11.5791 1.99942 12.0869 1.99951C12.5946 1.99961 13.0815 2.2014 13.4405 2.5605C13.7995 2.91961 14.0011 3.4066 14.001 3.91436C14.0009 4.42211 13.7991 4.90903 13.44 5.268L12.707 6.002L9.999 3.294L10.733 2.561V2.56ZM9.293 4.001L3.337 9.955C3.15621 10.1359 3.01996 10.3564 2.939 10.599L2.025 13.342C1.99555 13.4301 1.99121 13.5246 2.01247 13.615C2.03373 13.7054 2.07975 13.7881 2.14536 13.8538C2.21098 13.9196 2.2936 13.9657 2.38397 13.9871C2.47434 14.0085 2.56888 14.0043 2.657 13.975L5.4 13.06C5.643 12.98 5.863 12.843 6.044 12.662L12 6.709L9.292 4L9.293 4.001Z"
-										fill="#06B6D4"
-									/>
-								</svg>
-							</a>
-						</span> -->
-					<form action="?/deleteTransaction" method="post" use:enhance>
-						<input type="hidden" name="id" value={transaction.id} />
-						<button type="submit">
+
+					<div class="relative">
+						<button on:click={() => handleDropdownClick(transaction.id)}>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								fill="none"
@@ -211,10 +225,35 @@
 								stroke="currentColor"
 								class="size-6"
 							>
-								<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
+								/>
 							</svg>
 						</button>
-					</form>
+						<div
+							on:focusout={handleDropdownFocusLoss}
+							class="absolute right-0 z-10 mt-2 w-40 bg-white rounded-md ring-1 ring-black ring-opacity-5 shadow-lg focus:outline-none"
+							style:visibility={isDropdownOpen[transaction.id] ? 'visible' : 'hidden'}
+						>
+							<div class="py-1">
+								<a
+									href={`/edit-transaction/${transaction.id}`}
+									class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+									role="menuitem">Edit</a
+								>
+								<form action="?/deleteTransaction" method="post" use:enhance>
+									<input type="hidden" name="id" value={transaction.id} />
+									<button
+										type="submit"
+										class="block px-4 py-2 w-full text-sm text-left text-red-500 hover:bg-gray-100"
+										>Delete</button
+									>
+								</form>
+							</div>
+						</div>
+					</div>
 				</li>
 			{/each}
 		</ul>
@@ -274,7 +313,7 @@
 				fill="black"
 			/>
 			<path
-				d="M146.65 120.675H112.75C110.098 120.675 107.554 119.621 105.679 117.746C103.804 115.871 102.75 113.327 102.75 110.675V92.35C102.75 89.6978 103.804 87.1543 105.679 85.2789C107.554 83.4036 110.098 82.35 112.75 82.35H146.65C147.313 82.35 147.949 82.6134 148.418 83.0822C148.887 83.5511 149.15 84.187 149.15 84.85V118.175C149.15 118.838 148.887 119.474 148.418 119.943C147.949 120.412 147.313 120.675 146.65 120.675ZM112.75 87.35C111.424 87.35 110.152 87.8768 109.214 88.8145C108.277 89.7522 107.75 91.0239 107.75 92.35V110.65C107.75 111.976 108.277 113.248 109.214 114.186C110.152 115.123 111.424 115.65 112.75 115.65H144.15V87.35H112.75ZM69.375 50.425H34.65C34.0063 50.4224 33.3884 50.1717 32.925 49.725C30.2176 47.104 28.0778 43.9545 26.6383 40.4721C25.1988 36.9896 24.4904 33.2484 24.557 29.4808C24.6236 25.7131 25.4638 21.9993 27.0255 18.5699C28.5872 15.1405 30.837 12.0687 33.6354 9.54502C36.4337 7.02135 39.7209 5.09972 43.2929 3.89939C46.8648 2.69905 50.6454 2.24563 54.3999 2.56726C58.1544 2.88888 61.8027 3.9787 65.1185 5.76907C68.4342 7.55943 71.3466 10.0121 73.675 12.975C74.0238 13.4164 74.2135 13.9625 74.2135 14.525C74.2135 15.0875 74.0238 15.6336 73.675 16.075C70.5792 20.0327 68.8973 24.9128 68.8973 29.9375C68.8973 34.9622 70.5792 39.8423 73.675 43.8C74.0115 44.2371 74.194 44.7733 74.194 45.325C74.194 45.8767 74.0115 46.4129 73.675 46.85C72.922 47.8831 72.0859 48.853 71.175 49.75C70.9344 49.9757 70.6514 50.1516 70.3425 50.2674C70.0335 50.3833 69.7047 50.4368 69.375 50.425ZM35.7 45.425H68.375L68.55 45.25C65.519 40.7231 63.9008 35.3979 63.9008 29.95C63.9008 24.5021 65.519 19.1769 68.55 14.65C66.4448 12.3738 63.8877 10.5621 61.0421 9.33089C58.1966 8.0997 55.1254 7.47609 52.025 7.49999C47.6223 7.49696 43.3155 8.78565 39.6381 11.2064C35.9607 13.6271 33.0743 17.0736 31.3365 21.1188C29.5987 25.1639 29.0858 29.63 29.8614 33.9638C30.637 38.2976 32.6671 42.3087 35.7 45.5V45.425Z"
+				d="M146.65 120.675H112.75C110.098 120.675 107.554 119.621 105.679 117.746C103.804 115.871 102.75 113.327 102.75 110.675V92.35C102.75 89.6978 103.804 87.1543 105.679 85.2789C107.554 83.4036 110.098 82.35 112.75 82.35H146.65C147.313 82.35 147.949 82.6134 148.418 83.0822C148.887 83.5511 149.15 84.187 149.15 84.85V118.175C149.15 118.838 148.887 119.474 148.418 119.943C147.949 120.412 147.313 120.675 146.65 120.675ZM112.75 87.35C111.424 87.35 110.152 87.8768 109.214 88.8145C108.277 89.7522 107.75 91.0239 107.75 92.35V110.65C107.75 111.976 108.277 113.248 109.214 114.186C110.152 115.123 111.424 115.65 112.75 115.65H144.15V87.35H112.75ZM69.375 50.425H34.65C34.0063 50.4224 33.3884 50.1717 32.925 49.725C30.2176 47.104 28.0778 43.9545 26.6383 40.4721C25.1988 36.9896 24.4904 33.2484 24.557 29.4808C24.6236 25.7131 25.4638 21.9993 27.0255 18.5699C28.5872 15.1405 30.837 12.0687 33.6354 9.54502C36.4337 7.02135 39.7209 5.09972 43.2929 3.89939C46.8648 2.69905 50.6454 2.24563 54.3999 2.56726C58.1544 2.88888 61.8027 3.9787 65.1185 5.76907C68.4342 7.55943 71.3466 10.0121 73.675 12.975C74.0238 13.4164 74.2135 13.9625 74.2135 14.525C74.2135 15.0875 74.0238 15.6336 73.675 16.075C70.5792 20.0327 68.8973 24.9128 68.8973 29.9375C68.8973 34.9622 70.5792 39.8423 73.675 43.8C74.125 44.375 74.575 45 75 45.425ZM35.7 45.425H68.375L68.55 45.25C65.519 40.7231 63.9008 35.3979 63.9008 29.95C63.9008 24.5021 65.519 19.1769 68.55 14.65C66.4448 12.3738 63.8877 10.5621 61.0421 9.33089C58.1966 8.0997 55.1254 7.47609 52.025 7.49999C47.6223 7.49696 43.3155 8.78565 39.6381 11.2064C35.9607 13.6271 33.0743 17.0736 31.3365 21.1188C29.5987 25.1639 29.0858 29.63 29.8614 33.9638C30.637 38.2976 32.6671 42.3087 35.7 45.5V45.425Z"
 				fill="black"
 			/>
 			<path
