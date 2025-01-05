@@ -10,6 +10,13 @@
 	let errorMessage = '';
 	let errorTimeout;
 
+	let id = transaction[0].id;
+	let name = transaction[0].name;
+	let type = transaction[0].type;
+	let amount = transaction[0].amount;
+	let currency = transaction[0].currency;
+	let date = transaction[0].date;
+
 	function setTemporaryError(message) {
 		errorMessage = message;
 		if (errorTimeout) clearTimeout(errorTimeout);
@@ -37,44 +44,43 @@
 	});
 </script>
 
-<div class="pt-10 md:pt-20">
-	<div class="flex justify-between items-center mb-4">
+<div class="pt-8 md:pt-10">
+	<div class="flex justify-between items-center pb-4 mx-auto max-w-lg">
 		<a href="/">
-			<span class="text-primary">
+			<span class="text-white hover:text-primary">
 				<svg
-					class="fill-current"
-					width="21"
-					height="18"
-					viewBox="0 0 21 18"
 					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke-width="1.5"
+					stroke="currentColor"
+					class="size-6"
 				>
 					<path
-						d="M11.5642 1L0.999999 8.99685M0.999999 8.99685L11.5642 17M0.999999 8.99685L20 8.99686"
-						stroke="#F1FFF3"
-						stroke-width="2"
 						stroke-linecap="round"
 						stroke-linejoin="round"
+						d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
 					/>
 				</svg>
 			</span>
 		</a>
 
-		<h1 class="text-xl font-semibold md:text-2xl text-primary">Edit Transaction</h1>
+		<h1 class="text-xl font-bold md:text-2xl text-primary">Edit Transaction</h1>
 		<span />
 	</div>
 	<form
 		action="?/editTransaction"
 		method="post"
 		use:enhance={handleSubmit}
-		class="p-4 mx-auto max-w-md rounded-lg md:p-8 bg-gray-800/50"
+		class="p-4 mx-auto max-w-lg rounded-lg md:p-8 bg-gray-800/50"
 	>
 		<div class="mb-2 h-10">
 			<Error message={errorMessage} />
 		</div>
-		<input type="hidden" name="id" value={transaction[0].id} />
+		<input type="hidden" name="id" value={id} />
 
 		<div class="flex flex-col gap-4 md:gap-6">
-			<Input name="name" type="text" value={transaction[0].name} placeholder="Name" />
+			<Input name="name" type="text" value={name} placeholder="Name" />
 
 			<div class="space-y-2">
 				<label for="type" class="text-sm text-gray-300">Type</label>
@@ -82,7 +88,7 @@
 					class="grid grid-cols-2 gap-2 p-1.5 w-full text-gray-100 rounded border border-gray-700 md:p-3 bg-gray-900/50"
 				>
 					<label class="relative">
-						<input type="radio" name="type" value="income" class="sr-only peer" checked />
+						<input type="radio" name="type" value="income" class="sr-only peer" bind:group={type} />
 						<div
 							class="p-1 text-center rounded transition-all cursor-pointer md:p-2 peer-checked:bg-primary peer-checked:text-white hover:bg-primary/20"
 						>
@@ -91,7 +97,13 @@
 					</label>
 
 					<label class="relative">
-						<input type="radio" name="type" value="expense" class="sr-only peer" />
+						<input
+							type="radio"
+							name="type"
+							value="expense"
+							class="sr-only peer"
+							bind:group={type}
+						/>
 						<div
 							class="p-1 text-center rounded transition-all cursor-pointer md:p-2 peer-checked:bg-primary peer-checked:text-white hover:bg-primary/20"
 						>
@@ -100,7 +112,61 @@
 					</label>
 				</div>
 			</div>
-			<Input name="amount" type="text" value={transaction[0].amount} placeholder="Amount" />
+
+			<Input name="amount" type="text" value={amount} placeholder="Amount" />
+
+			<div class="space-y-2">
+				<label for="type" class="text-sm text-gray-300">Currency</label>
+				<div
+					class="grid grid-cols-3 gap-2 p-1.5 w-full text-gray-100 rounded border border-gray-700 md:p-3 bg-gray-900/50"
+				>
+					<label class="relative">
+						<input
+							type="radio"
+							name="currency"
+							value="RSD"
+							class="sr-only peer"
+							bind:group={currency}
+						/>
+						<div
+							class="p-1 text-center rounded transition-all cursor-pointer md:p-2 peer-checked:bg-primary peer-checked:text-white hover:bg-primary/20"
+						>
+							RSD
+						</div>
+					</label>
+
+					<label class="relative">
+						<input
+							type="radio"
+							name="currency"
+							value="EUR"
+							class="sr-only peer"
+							bind:group={currency}
+						/>
+						<div
+							class="p-1 text-center rounded transition-all cursor-pointer md:p-2 peer-checked:bg-primary peer-checked:text-white hover:bg-primary/20"
+						>
+							EUR
+						</div>
+					</label>
+					<label class="relative">
+						<input
+							type="radio"
+							name="currency"
+							value="USD"
+							class="sr-only peer"
+							bind:group={currency}
+						/>
+						<div
+							class="p-1 text-center rounded transition-all cursor-pointer md:p-2 peer-checked:bg-primary peer-checked:text-white hover:bg-primary/20"
+						>
+							USD
+						</div>
+					</label>
+				</div>
+			</div>
+
+			<Input name="date" type="date" value={new Date(date).toISOString().split('T')[0]} />
 
 			<button
 				class="relative py-2 mt-4 w-full text-white rounded shadow-lg transition-all duration-300 md:py-3 bg-primary hover:bg-primary/60 disabled:opacity-70 shadow-primary/20"

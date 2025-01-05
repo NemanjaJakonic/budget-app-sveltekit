@@ -29,11 +29,14 @@ export const actions = {
 		const formData = await request.formData();
 		const name = formData.get('name');
 		const amount = formData.get('amount');
+		const type = formData.get('type');
+		const currency = formData.get('currency');
+		const date = formData.get('date');
 		const id = formData.get('id');
 
 		const { error } = await supabase
 			.from('transactions')
-			.update({ name, amount })
+			.update({ name, amount, type, currency, date })
 			.match({ id: id, user_id: session.user.id });
 
 		if (error) {
@@ -43,4 +46,3 @@ export const actions = {
 		throw redirect(303, '/');
 	}
 };
-

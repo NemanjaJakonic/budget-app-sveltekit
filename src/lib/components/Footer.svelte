@@ -1,4 +1,4 @@
-<nav class="flex fixed bottom-0 justify-center items-center w-full h-8 shadow-lg bg-gray-800/50">
+<nav class="flex justify-center items-center w-full h-8 shadow-lg bg-gray-800/50">
 	<a href="/">
 		<div class="flex gap-1 items-center">
 			<svg

@@ -3,9 +3,13 @@
 @tailwind utilities;
 
 .without-ring {
-    @apply focus:ring-0 focus:ring-offset-0;
-  }
-
-body{
-    font-family: 'Inter', sans-serif;
+	@apply focus:ring-0 focus:ring-offset-0;
 }
+
+body {
+	font-family: 'Inter', sans-serif;
+}
+
+/* * {
+	outline: 1px solid red;
+} */

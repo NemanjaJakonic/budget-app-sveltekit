@@ -6,20 +6,37 @@
 	import { page } from '$app/stores';
 
 	let rates = data.rates;
-	let total_balance = 0;
+	let totalBalanceRSD = 0;
+	let totalBalanceEUR = 0;
 
-	function convertToRSD(price) {
+	function convertToRSD(amount) {
 		const currencyFormat = new Intl.NumberFormat('sr-Latn-RS', {
 			style: 'currency',
 			currency: 'EUR'
 		});
-		return currencyFormat.format(price).replace('€', 'RSD');
+		return currencyFormat.format(amount).replace('€', 'RSD');
+	}
+
+	function convertToEUR(amount) {
+		const currencyFormat = new Intl.NumberFormat('sr-Latn-RS', {
+			style: 'currency',
+			currency: 'EUR'
+		});
+		return currencyFormat.format(amount);
+	}
+
+	function convertToUSD(amount) {
+		const currencyFormat = new Intl.NumberFormat('sr-Latn-RS', {
+			style: 'currency',
+			currency: 'USD'
+		});
+		return currencyFormat.format(amount);
 	}
 
 	const { session, transactions, supabase } = data;
 
 	onMount(async () => {
-		total_balance = transactions.reduce((accumulator, object) => {
+		totalBalanceRSD = transactions.reduce((accumulator, object) => {
 			let amount = object.amount;
 			switch (object.currency) {
 				case 'EUR':
@@ -38,6 +55,8 @@
 				return accumulator - amount;
 			}
 		}, 0);
+
+		totalBalanceEUR = totalBalanceRSD / rates.RSD;
 
 		await invalidateAll();
 	});
@@ -59,29 +78,49 @@
 </script>
 
 {#if data.session}
-	<div class="flex justify-between my-4 font-bold">
+	<div class="flex justify-between py-4 mx-auto max-w-lg font-bold">
 		<p>Welcome, {data.session.user.user_metadata.first_name}!</p>
 		<form action="/logout" method="post">
-			<button class="hover:text-primary" type="submit">Log Out</button>
+			<button class="flex hover:text-primary" type="submit">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke-width="1.5"
+					stroke="currentColor"
+					class="size-6"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15"
+					/>
+				</svg>
+				<span>Log Out</span>
+			</button>
 		</form>
 	</div>
+	<div class="p-4 mx-auto w-full max-w-lg rounded-lg md:p-8 bg-gray-800/50">
+		<p class="h-8">
+			{#if rates}
+				Današnji EUR kurs: <span class="text-primary">{rates.RSD}</span>
+			{/if}
+		</p>
 
-	<p class="h-8">
-		{#if rates}
-			Današnji EUR kurs: {rates.RSD}
-		{/if}
-	</p>
-	<div class="w-full h-28 rounded-md border shadow-lg border-primary">
-		<div class="flex justify-between p-4">
+		<div class="flex justify-end p-2 rounded border border-primary">
 			<div>
-				<p class="text-base font-extrabold uppercase">Total balance</p>
-				<h2 class="text-3xl font-extrabold text-right uppercase">
-					{convertToRSD(total_balance)}
+				<p class="text-xs font-bold text-right uppercase">Total balance</p>
+				<h2 class="text-2xl font-extrabold text-right uppercase">
+					{convertToRSD(totalBalanceRSD)}
+				</h2>
+				<h2 class="text-2xl font-extrabold text-right uppercase">
+					{convertToEUR(totalBalanceEUR)}
 				</h2>
 			</div>
 		</div>
+	</div>
 
-		<!-- <div class="flex gap-4 mt-4">
+	<!-- <div class="flex gap-4 mt-4">
 			<div
 				class="flex-1 border rounded-md h-28 border-[#84CB5D] bg-[#84cb5d]/[.36] shadow-lg flex justify-center items-center"
 			>
@@ -100,19 +139,52 @@
 			</div>
 		</div> -->
 
-		<div class="my-10">
-			<!-- <div class="flex justify-between mb-4">
+	<div class="flex justify-end py-6 mx-auto max-w-lg">
+		<a
+			href="/add-transaction"
+			class="flex justify-center items-center px-4 py-2 font-semibold text-white rounded shadow-lg transition-all duration-300 w-fit md:py-3 bg-primary hover:bg-primary/60 disabled:opacity-70 shadow-primary/20"
+		>
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke-width="1.5"
+				stroke="currentColor"
+				class="size-6"
+			>
+				<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+			</svg>
+			<span> Add Transaction </span>
+		</a>
+	</div>
+
+	<h3 class="pb-2 text-xl font-bold text-center text-primary">Transactions</h3>
+	<div class="p-4 mx-auto w-full max-w-lg rounded-lg md:p-8 bg-gray-800/50">
+		<!-- <div class="flex justify-between mb-4">
 				<span class="font-bold">Recent</span>
 				<span class="font-bold">View All</span>
 			</div> -->
-			<ul>
-				{#each data.transactions as transaction}
-					<li class="flex gap-4 items-center p-2 border-b">
-						<span class="flex-1 hover:text-primary">
-							<a href="/edit-transaction/{transaction.id}">{transaction.name}</a></span
-						>
-						<span class="flex-1">{transaction.amount}</span>
-						<!-- <span>
+
+		<ul>
+			{#each data.transactions as transaction}
+				<li class="flex gap-4 items-center py-2 border-b">
+					<span class="flex-1 hover:text-primary">
+						<a href="/edit-transaction/{transaction.id}">{transaction.name}</a></span
+					>
+					<span
+						class="flex-1 font-semibold text-right {transaction.type === 'expense'
+							? 'text-red-400'
+							: 'text-green-400'}"
+						>{transaction.type === 'expense' ? '-' : ''}
+						{#if transaction.currency === 'EUR'}
+							{convertToEUR(transaction.amount)}
+						{:else if transaction.currency === 'USD'}
+							{convertToUSD(transaction.amount)}
+						{:else if transaction.currency === 'RSD'}
+							{convertToRSD(transaction.amount)}
+						{/if}
+					</span>
+					<!-- <span>
 							<a href="/edit-transaction/{transaction.id}">
 								<svg
 									width="16"
@@ -128,40 +200,27 @@
 								</svg>
 							</a>
 						</span> -->
-						<form action="?/deleteTransaction" method="post" use:enhance>
-							<input type="hidden" name="id" value={transaction.id} />
-							<button type="submit">
-								<svg
-									width="24"
-									height="24"
-									viewBox="0 0 24 24"
-									fill="none"
-									xmlns="http://www.w3.org/2000/svg"
-								>
-									<path
-										fill-rule="evenodd"
-										clip-rule="evenodd"
-										d="M17 5V4C17 3.46957 16.7893 2.96086 16.4142 2.58579C16.0391 2.21071 15.5304 2 15 2H9C8.46957 2 7.96086 2.21071 7.58579 2.58579C7.21071 2.96086 7 3.46957 7 4V5H4C3.73478 5 3.48043 5.10536 3.29289 5.29289C3.10536 5.48043 3 5.73478 3 6C3 6.26522 3.10536 6.51957 3.29289 6.70711C3.48043 6.89464 3.73478 7 4 7H5V18C5 18.7956 5.31607 19.5587 5.87868 20.1213C6.44129 20.6839 7.20435 21 8 21H16C16.7956 21 17.5587 20.6839 18.1213 20.1213C18.6839 19.5587 19 18.7956 19 18V7H20C20.2652 7 20.5196 6.89464 20.7071 6.70711C20.8946 6.51957 21 6.26522 21 6C21 5.73478 20.8946 5.48043 20.7071 5.29289C20.5196 5.10536 20.2652 5 20 5H17ZM15 4H9V5H15V4ZM17 7H7V18C7 18.2652 7.10536 18.5196 7.29289 18.7071C7.48043 18.8946 7.73478 19 8 19H16C16.2652 19 16.5196 18.8946 16.7071 18.7071C16.8946 18.5196 17 18.2652 17 18V7Z"
-										fill="#EC6568"
-									/>
-									<path d="M9 9H11V17H9V9ZM13 9H15V17H13V9Z" fill="#EC6568" />
-								</svg>
-							</button>
-						</form>
-					</li>
-				{/each}
-			</ul>
-		</div>
-		<div class="flex justify-end">
-			<a
-				href="/add-transaction"
-				class="flex justify-center items-center px-4 py-2.5 w-24 rounded-md border border-primary bg-primary"
-				>Add</a
-			>
-		</div>
+					<form action="?/deleteTransaction" method="post" use:enhance>
+						<input type="hidden" name="id" value={transaction.id} />
+						<button type="submit">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="size-6"
+							>
+								<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+							</svg>
+						</button>
+					</form>
+				</li>
+			{/each}
+		</ul>
 	</div>
 {:else}
-	<div class="flex absolute inset-x-0 top-64 justify-center">
+	<div class="flex inset-x-0 justify-center pt-40">
 		<svg
 			width="160"
 			height="160"
@@ -228,7 +287,7 @@
 			/>
 		</svg>
 	</div>
-	<div class="flex absolute inset-x-0 bottom-20 gap-12 justify-center">
+	<div class="flex inset-x-0 gap-12 justify-center pt-10">
 		<a
 			href="/register"
 			class="flex justify-center items-center px-4 py-2.5 w-24 rounded-md border shadow-lg border-primary"

@@ -27,7 +27,7 @@
 		use:enhance={handleSubmit}
 		class="p-4 mx-auto max-w-md rounded-xl md:p-8 bg-gray-800/50"
 	>
-		<h1 class="mb-4 text-2xl font-semibold text-primary">Welcome</h1>
+		<h1 class="mb-4 text-2xl font-semibold text-center text-primary">Welcome</h1>
 
 		<div class="mb-2 h-10">
 			<Error message={errorMessage} />
