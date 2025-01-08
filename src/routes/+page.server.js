@@ -4,20 +4,34 @@ import { fail, redirect } from '@sveltejs/kit';
 export async function load({ locals: { getSession } }) {
 	const session = await getSession();
 	if (session) {
-		const { data, error } = await supabase
+		// Fetch transactions
+		const { data: transactions, error: transactionsError } = await supabase
 			.from('transactions')
 			.select()
 			.eq('user_id', session.user.id)
 			.order('date', { ascending: false });
-		if (error) {
-			console.log(error);
+		if (transactionsError) {
+			console.log(transactionsError);
 		}
+
+		// Fetch profiles
+		const { data: profiles, error: profilesError } = await supabase
+			.from('profiles')
+			.select()
+			.eq('user_id', session.user.id)
+			.limit(1);
+		if (profilesError) {
+			console.log(profilesError);
+		}
+
 		return {
-			transactions: data ?? []
+			transactions: transactions ?? [],
+			profiles: profiles ?? [] // Return profiles data
 		};
 	} else {
 		return {
-			transactions: []
+			transactions: [],
+			profiles: [] // Return empty profiles data
 		};
 	}
 }

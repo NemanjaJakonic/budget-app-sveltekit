@@ -8,8 +8,11 @@
 	import { Chart, registerables } from 'chart.js';
 	Chart.register(...registerables);
 
+	const { session, transactions, supabase, profiles } = data;
+	const profile = profiles[0];
+
 	let rates = data.rates;
-	let totalBalanceRSD = 2937000;
+	let totalBalanceRSD = profile.starting_balance;
 	let totalBalanceEUR = 0;
 	let savings = 0;
 	let savingsEUR = 0;
@@ -46,8 +49,6 @@
 		});
 		return currencyFormat.format(amount);
 	}
-
-	const { session, transactions, supabase } = data;
 
 	onMount(async () => {
 		totalBalanceRSD += transactions.reduce((accumulator, object) => {
