@@ -11,6 +11,11 @@
 	let rates = data.rates;
 	let totalBalanceRSD = 2937000;
 	let totalBalanceEUR = 0;
+	let savings = 0;
+	let savingsEUR = 0;
+	let savingsPercentage = 0;
+
+	const currentMonth = new Date().getMonth();
 
 	let monthlyData = {
 		labels: [],
@@ -115,6 +120,54 @@
 			}
 		});
 
+		let currentMonthIncome = 0;
+		let currentMonthExpenses = 0;
+
+		data.transactions.forEach((transaction) => {
+			const transactionDate = new Date(transaction.date);
+			if (transactionDate.getMonth() === currentMonth) {
+				if (transaction.type === 'income') {
+					currentMonthIncome += transaction.amount;
+				} else if (transaction.type === 'expense') {
+					currentMonthExpenses += transaction.amount;
+				}
+			}
+		});
+
+		savings = currentMonthIncome - currentMonthExpenses;
+		savingsEUR = savings / rates.RSD;
+
+		savingsPercentage = currentMonthIncome > 0 ? (savings / currentMonthIncome) * 100 : 0; // Calculate savings percentage
+
+		// const ctx = document.getElementById('monthlyChart').getContext('2d');
+		// new Chart(ctx, {
+		// 	type: 'doughnut',
+		// 	data: {
+		// 		labels: ['Income', 'Expenses'],
+		// 		datasets: [
+		// 			{
+		// 				data: [
+		// 					currentMonthTotals[currentMonth].income,
+		// 					currentMonthTotals[currentMonth].expenses
+		// 				],
+		// 				backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)']
+		// 			}
+		// 		]
+		// 	},
+		// 	options: {
+		// 		responsive: true,
+		// 		plugins: {
+		// 			legend: {
+		// 				position: 'top'
+		// 			},
+		// 			title: {
+		// 				display: true,
+		// 				text: 'Chart.js Pie Chart'
+		// 			}
+		// 		}
+		// 	}
+		// });
+
 		await invalidateAll();
 	});
 
@@ -146,8 +199,8 @@
 </script>
 
 {#if data.session}
-	<div class="flex justify-between py-4 mx-auto max-w-lg font-bold">
-		<p>Welcome, {data.session.user.user_metadata.first_name}!</p>
+	<div class="flex justify-between py-4 mx-auto max-w-xl font-bold">
+		<p>Welcome back, {data.session.user.user_metadata.first_name}!</p>
 		<form action="/logout" method="post">
 			<button class="flex hover:text-primary" type="submit">
 				<svg
@@ -168,35 +221,50 @@
 			</button>
 		</form>
 	</div>
-	<div class="p-4 mx-auto w-full max-w-xl rounded-lg md:p-8 bg-gray-800/50">
-		<p class="h-8">
-			{#if rates}
-				Današnji EUR kurs: <span class="text-primary">{rates.RSD}</span>
-			{/if}
-		</p>
-
-		<div class="flex justify-end p-2 rounded border border-primary">
+	<div class="pb-4 mx-auto w-full max-w-xl rounded-lg md:py-6">
+		<div class="py-2 rounded">
 			<div>
-				<p class="text-xs font-bold text-right uppercase">Total balance</p>
-				<h2 class="text-2xl font-extrabold text-right uppercase">
+				<p class="h-8">
+					{#if rates}
+						Današnji EUR kurs: <span class="text-primary">{rates.RSD}</span>
+					{/if}
+				</p>
+				<p class="text-xs font-bold uppercase">Total balance</p>
+				<h2 class="text-2xl font-extrabold uppercase">
 					{convertToRSD(totalBalanceRSD)}
 				</h2>
-				<h2 class="text-2xl font-extrabold text-right uppercase">
+				<h2 class="text-2xl font-extrabold uppercase">
 					{convertToEUR(totalBalanceEUR)}
 				</h2>
 			</div>
 		</div>
 	</div>
 
-	<div class="mx-auto mt-4 w-full max-w-xl min-h-48 chart-container">
+	<div class="pt-2 mx-auto w-full max-w-xl chart-container">
 		<canvas id="monthlyChart" />
 	</div>
 
-	<h3 class="py-2 text-xl font-bold text-center text-primary">Transactions</h3>
-	<div class="py-4 mx-auto w-full max-w-xl rounded-lg md:py-8">
+	<div class="pt-8 mx-auto max-w-xl">
+		<p>
+			{new Date().toLocaleString('default', { month: 'long' })} Savings:
+			<span class="font-bold">{convertToEUR(savingsEUR)}</span>
+		</p>
+		<div class="relative w-full rounded border">
+			<div class="flex absolute left-1/2 items-center h-full font-bold -translate-x-1/2">
+				{savingsPercentage.toFixed(2)}%
+			</div>
+			<div
+				class="flex justify-center items-center h-8 rounded-tl rounded-bl bg-primary"
+				style="width: {savingsPercentage}%;"
+			/>
+		</div>
+	</div>
+
+	<h3 class="pt-4 text-xl font-bold text-center text-primary">Transactions</h3>
+	<div class="py-4 mx-auto w-full max-w-xl rounded-lg md:py-6">
 		<ul>
 			{#each data.transactions as transaction}
-				<li class="flex gap-4 items-center p-3 my-3 rounded-lg bg-gray-800/50">
+				<li class="flex gap-4 items-center p-3 my-3 rounded-lg bg-gray-800/40">
 					<div class="flex-1 hover:text-primary">
 						<a href="/edit-transaction/{transaction.id}">{transaction.name}</a>
 						<p class="text-xs">{transaction.date}</p>

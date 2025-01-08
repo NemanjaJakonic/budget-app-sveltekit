@@ -47,7 +47,7 @@
 	</a>
 </nav> -->
 
-<div class="fixed bottom-0 w-full h-14 bg-gray-800/50">
+<div class="fixed bottom-0 w-full h-14 bg-[#1B2129]">
 	<div class="flex justify-around items-center mx-auto max-w-xl h-full">
 		<span class="hover:text-primary">
 			<a href="/">
@@ -70,7 +70,7 @@
 		<span>
 			<a
 				href="/add-transaction"
-				class="flex justify-center items-center px-4 py-2 mt-[-2rem] font-semibold text-white rounded shadow-lg transition-all duration-300 w-fit md:py-3 bg-primary hover:bg-primary/20 disabled:opacity-70 shadow-primary/20"
+				class="flex justify-center items-center px-4 py-2 mt-[-2rem] font-semibold text-white rounded shadow-lg transition-all duration-300 w-fit md:py-3 bg-primary hover:bg-primaryHover disabled:opacity-70 shadow-primary/20"
 			>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"

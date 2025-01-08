@@ -25,7 +25,7 @@
 </script>
 
 <!-- <Header /> -->
-<main class="container px-4 mx-auto md:px-0 min-h-[calc(100vh-2rem)]">
+<main class="container px-4 mx-auto md:px-0 min-h-[calc(100vh-3.5rem)]">
 	<slot />
 </main>
 {#if data.session}
