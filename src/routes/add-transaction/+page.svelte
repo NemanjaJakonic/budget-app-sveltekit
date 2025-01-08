@@ -77,9 +77,42 @@
 		</div>
 
 		<div class="flex flex-col gap-4 md:gap-6">
-			<Input name="name" type="text" placeholder="Name" />
+			<div class="flex gap-4 items-end">
+				<div class="w-2/3">
+					<Input name="name" type="text" placeholder="Name" label="Name" />
+				</div>
+				<div class="space-y-2">
+					<label for="type" class="text-sm text-gray-300">Type</label>
+					<select
+						name="type"
+						id="type"
+						class="px-2 py-[10px] md:py-[14px] w-full text-gray-100 rounded border border-gray-700 transition-colors outline-none md:px-3 bg-gray-900/50 focus:border-primary"
+					>
+						<option value="expense">Expense</option>
+						<option value="income">Income</option>
+					</select>
+				</div>
+			</div>
 
-			<div class="space-y-2">
+			<div class="flex gap-4 items-end">
+				<div class="w-2/3">
+					<Input name="amount" type="text" placeholder="Amount" label="Amount" />
+				</div>
+				<div class="space-y-2">
+					<label for="currency" class="text-sm text-gray-300">Currency</label>
+					<select
+						name="currrency"
+						id="currrency"
+						class="px-2 py-[10px] w-full text-gray-100 rounded border border-gray-700 transition-colors outline-none md:px-3 md:py-[14px] bg-gray-900/50 focus:border-primary"
+					>
+						<option value="RSD">RSD</option>
+						<option value="EUR">EUR</option>
+						<option value="USD">USD</option>
+					</select>
+				</div>
+			</div>
+
+			<!-- <div class="space-y-2">
 				<label for="type" class="text-sm text-gray-300">Type</label>
 				<div
 					class="grid grid-cols-2 gap-2 p-1.5 w-full text-gray-100 rounded border border-gray-700 md:p-3 bg-gray-900/50"
@@ -102,11 +135,11 @@
 						</div>
 					</label>
 				</div>
-			</div>
+			</div> -->
 
-			<Input name="amount" type="text" placeholder="Amount" />
+			<!-- <Input name="amount" type="text" placeholder="Amount" /> -->
 
-			<div class="space-y-2">
+			<!-- <div class="space-y-2">
 				<label for="type" class="text-sm text-gray-300">Currency</label>
 				<div
 					class="grid grid-cols-3 gap-2 p-1.5 w-full text-gray-100 rounded border border-gray-700 md:p-3 bg-gray-900/50"
@@ -137,9 +170,9 @@
 						</div>
 					</label>
 				</div>
-			</div>
+			</div> -->
 
-			<Input name="date" type="date" value={new Date().toISOString().split('T')[0]} />
+			<Input name="date" type="date" label="Date" value={new Date().toISOString().split('T')[0]} />
 
 			<button
 				class="relative py-2 mt-4 w-full text-white rounded shadow-lg transition-all duration-300 md:py-3 bg-primary hover:bg-primary/60 disabled:opacity-70 shadow-primary/20"
