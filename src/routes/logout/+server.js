@@ -4,8 +4,8 @@ export const POST = async ({ locals }) => {
 	const { error } = await locals.supabase.auth.signOut();
 
 	if (error) {
-		return fail(500, { message: 'Server error. Try again later.', success: false, email });
+		return fail(500, { message: 'Server error. Try again later.', success: false });
 	}
 
-    throw redirect(303, '/')
+	throw redirect(303, '/');
 };

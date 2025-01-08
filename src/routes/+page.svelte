@@ -8,11 +8,16 @@
 	import { Chart, registerables } from 'chart.js';
 	Chart.register(...registerables);
 
+	let totalBalanceRSD = 0;
+
 	const { session, transactions, supabase, profiles } = data;
-	const profile = profiles[0];
+
+	if (profiles.length) {
+		const profile = profiles[0];
+		totalBalanceRSD = profile.starting_balance;
+	}
 
 	let rates = data.rates;
-	let totalBalanceRSD = profile.starting_balance;
 	let totalBalanceEUR = 0;
 	let savings = 0;
 	let savingsEUR = 0;
