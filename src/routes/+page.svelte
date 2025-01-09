@@ -108,12 +108,12 @@
 					{
 						label: 'Income',
 						data: monthlyData.income,
-						backgroundColor: 'rgba(75, 192, 192, 0.6)'
+						backgroundColor: '#02862c'
 					},
 					{
 						label: 'Expenses',
 						data: monthlyData.expenses,
-						backgroundColor: 'rgba(255, 99, 132, 0.6)'
+						backgroundColor: '#9b3b3b'
 					}
 				]
 			},
@@ -130,12 +130,24 @@
 		let currentMonthExpenses = 0;
 
 		data.transactions.forEach((transaction) => {
+			let amount = transaction.amount;
+			switch (transaction.currency) {
+				case 'EUR':
+					amount *= rates.RSD;
+					break;
+				case 'USD':
+					amount *= rates.USD * rates.RSD;
+					break;
+				default:
+					amount = amount;
+					break;
+			}
 			const transactionDate = new Date(transaction.date);
 			if (transactionDate.getMonth() === currentMonth) {
 				if (transaction.type === 'income') {
-					currentMonthIncome += transaction.amount;
+					currentMonthIncome += amount;
 				} else if (transaction.type === 'expense') {
-					currentMonthExpenses += transaction.amount;
+					currentMonthExpenses += amount;
 				}
 			}
 		});
@@ -228,30 +240,30 @@
 		</form>
 	</div>
 	<div class="pb-4 mx-auto w-full max-w-xl rounded-lg md:py-6">
-		<div class="py-2 rounded">
+		<div class="p-3 rounded-lg bg-gray-800/40">
 			<div>
-				<p class="h-8">
+				<p class="h-8 text-sm">
 					{#if rates}
-						Današnji EUR kurs: <span class="text-primary">{rates.RSD}</span>
+						EUR exchange rate: <span class="text-primary">{rates.RSD}</span>
 					{/if}
 				</p>
 				<p class="text-xs font-bold uppercase">Total balance</p>
 				<h2 class="text-2xl font-extrabold uppercase">
 					{convertToRSD(totalBalanceRSD)}
 				</h2>
-				<h2 class="text-2xl font-extrabold uppercase">
+				<h2 class="text-xl font-extrabold uppercase">
 					{convertToEUR(totalBalanceEUR)}
 				</h2>
 			</div>
 		</div>
 	</div>
 
-	<div class="pt-2 mx-auto w-full max-w-xl chart-container">
+	<div class="p-2 mx-auto w-full max-w-xl rounded-lg chart-container bg-gray-800/40">
 		<canvas id="monthlyChart" />
 	</div>
 
 	<div class="pt-8 mx-auto max-w-xl">
-		<p>
+		<p class="text-sm">
 			{new Date().toLocaleString('default', { month: 'long' })} Savings:
 			<span class="font-bold">{convertToEUR(savingsEUR)}</span>
 		</p>
@@ -260,16 +272,16 @@
 				{savingsPercentage.toFixed(2)}%
 			</div>
 			<div
-				class="flex justify-center items-center h-8 rounded-tl rounded-bl bg-primary"
+				class="flex justify-center items-center h-6 rounded-tl rounded-bl bg-primary"
 				style="width: {savingsPercentage}%;"
 			/>
 		</div>
 	</div>
 
-	<h3 class="pt-4 text-xl font-bold text-center text-primary">Transactions</h3>
-	<div class="py-4 mx-auto w-full max-w-xl rounded-lg md:py-6">
+	<h3 class="pt-4 text-lg font-bold text-center text-primary">Recent Transactions</h3>
+	<div class="py-2 mx-auto w-full max-w-xl rounded-lg md:py-6">
 		<ul>
-			{#each data.transactions as transaction}
+			{#each data.transactions.slice(0, 3) as transaction}
 				<li class="flex gap-4 items-center p-3 my-3 rounded-lg bg-gray-800/40">
 					<div class="flex-1 hover:text-primary">
 						<a href="/edit-transaction/{transaction.id}">{transaction.name}</a>
@@ -277,8 +289,8 @@
 					</div>
 					<span
 						class="flex-1 font-semibold text-right {transaction.type === 'expense'
-							? 'text-red-400'
-							: 'text-green-400'}"
+							? 'text-expense'
+							: 'text-income'}"
 						>{transaction.type === 'expense' ? '-' : ''}
 						{#if transaction.currency === 'EUR'}
 							{convertToEUR(transaction.amount)}

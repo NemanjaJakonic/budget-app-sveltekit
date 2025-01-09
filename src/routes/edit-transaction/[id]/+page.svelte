@@ -80,89 +80,69 @@
 		<input type="hidden" name="id" value={id} />
 
 		<div class="flex flex-col gap-4 md:gap-6">
-			<Input name="name" type="text" value={name} placeholder="Name" />
-
-			<div class="space-y-2">
-				<label for="type" class="text-sm text-gray-300">Type</label>
-				<div
-					class="grid grid-cols-2 gap-2 p-1.5 w-full text-gray-100 rounded border border-gray-700 md:p-3 bg-gray-900/50"
-				>
-					<label class="relative">
-						<input type="radio" name="type" value="income" class="sr-only peer" bind:group={type} />
-						<div
-							class="p-1 text-center rounded transition-all cursor-pointer md:p-2 peer-checked:bg-primary peer-checked:text-white hover:bg-primary/20"
-						>
-							Income
-						</div>
-					</label>
-
-					<label class="relative">
-						<input
-							type="radio"
+			<div class="flex gap-4 items-end">
+				<div class="w-2/3">
+					<Input name="name" type="text" value={name} placeholder="Name" label="Name" />
+				</div>
+				<div class="w-1/3">
+					<div class="relative space-y-2">
+						<label for="type" class="text-sm text-gray-300">Type</label>
+						<select
 							name="type"
-							value="expense"
-							class="sr-only peer"
-							bind:group={type}
-						/>
-						<div
-							class="p-1 text-center rounded transition-all cursor-pointer md:p-2 peer-checked:bg-primary peer-checked:text-white hover:bg-primary/20"
+							id="type"
+							class="p-2 w-full text-gray-100 rounded border border-gray-700 transition-colors appearance-none outline-none md:p-3 bg-gray-900/50 focus:border-primary"
 						>
-							Expense
-						</div>
-					</label>
+							<option value="expense" selected={type === 'expense'}>Expense</option>
+							<option value="income" selected={type === 'income'}>Income</option>
+						</select>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="1.2"
+							stroke="currentColor"
+							class="absolute right-2.5 top-1/2 ml-1 w-5 h-5"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
+							/>
+						</svg>
+					</div>
 				</div>
 			</div>
-
-			<Input name="amount" type="text" value={amount} placeholder="Amount" />
-
-			<div class="space-y-2">
-				<label for="type" class="text-sm text-gray-300">Currency</label>
-				<div
-					class="grid grid-cols-3 gap-2 p-1.5 w-full text-gray-100 rounded border border-gray-700 md:p-3 bg-gray-900/50"
-				>
-					<label class="relative">
-						<input
-							type="radio"
+			<div class="flex gap-4 items-end">
+				<div class="w-2/3">
+					<Input name="amount" type="text" value={amount} placeholder="Amount" label="Amount" />
+				</div>
+				<div class="w-1/3">
+					<div class="relative space-y-2 w-full">
+						<label for="currency" class="text-sm text-gray-300">Currency</label>
+						<select
 							name="currency"
-							value="RSD"
-							class="sr-only peer"
-							bind:group={currency}
-						/>
-						<div
-							class="p-1 text-center rounded transition-all cursor-pointer md:p-2 peer-checked:bg-primary peer-checked:text-white hover:bg-primary/20"
+							id="currency"
+							class="p-2 w-full text-gray-100 rounded border border-gray-700 transition-colors appearance-none outline-none md:p-3 bg-gray-900/50 focus:border-primary"
 						>
-							RSD
-						</div>
-					</label>
-
-					<label class="relative">
-						<input
-							type="radio"
-							name="currency"
-							value="EUR"
-							class="sr-only peer"
-							bind:group={currency}
-						/>
-						<div
-							class="p-1 text-center rounded transition-all cursor-pointer md:p-2 peer-checked:bg-primary peer-checked:text-white hover:bg-primary/20"
+							<option value="RSD" selected={type === 'RSD'}>RSD</option>
+							<option value="EUR" selected={type === 'EUR'}>EUR</option>
+							<option value="USD" selected={type === 'USD'}>USD</option>
+						</select>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="1.2"
+							stroke="currentColor"
+							class="absolute right-2.5 top-1/2 ml-1 w-5 h-5"
 						>
-							EUR
-						</div>
-					</label>
-					<label class="relative">
-						<input
-							type="radio"
-							name="currency"
-							value="USD"
-							class="sr-only peer"
-							bind:group={currency}
-						/>
-						<div
-							class="p-1 text-center rounded transition-all cursor-pointer md:p-2 peer-checked:bg-primary peer-checked:text-white hover:bg-primary/20"
-						>
-							USD
-						</div>
-					</label>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
+							/>
+						</svg>
+					</div>
 				</div>
 			</div>
 

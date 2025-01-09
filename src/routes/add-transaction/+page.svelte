@@ -81,16 +81,32 @@
 				<div class="w-2/3">
 					<Input name="name" type="text" placeholder="Name" label="Name" />
 				</div>
-				<div class="space-y-2">
-					<label for="type" class="text-sm text-gray-300">Type</label>
-					<select
-						name="type"
-						id="type"
-						class="px-2 py-[10px] md:py-[14px] w-full text-gray-100 rounded border border-gray-700 transition-colors outline-none md:px-3 bg-gray-900/50 focus:border-primary"
-					>
-						<option value="expense">Expense</option>
-						<option value="income">Income</option>
-					</select>
+				<div class="w-1/3">
+					<div class="relative space-y-2">
+						<label for="type" class="text-sm text-gray-300">Type</label>
+						<select
+							name="type"
+							id="type"
+							class="p-2 w-full text-gray-100 rounded border border-gray-700 transition-colors appearance-none outline-none md:p-3 bg-gray-900/50 focus:border-primary"
+						>
+							<option value="expense">Expense</option>
+							<option value="income">Income</option>
+						</select>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="1.2"
+							stroke="currentColor"
+							class="absolute right-2.5 top-1/2 ml-1 w-5 h-5"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
+							/>
+						</svg>
+					</div>
 				</div>
 			</div>
 
@@ -98,79 +114,35 @@
 				<div class="w-2/3">
 					<Input name="amount" type="text" placeholder="Amount" label="Amount" />
 				</div>
-				<div class="space-y-2">
-					<label for="currency" class="text-sm text-gray-300">Currency</label>
-					<select
-						name="currrency"
-						id="currrency"
-						class="px-2 py-[10px] w-full text-gray-100 rounded border border-gray-700 transition-colors outline-none md:px-3 md:py-[14px] bg-gray-900/50 focus:border-primary"
-					>
-						<option value="RSD">RSD</option>
-						<option value="EUR">EUR</option>
-						<option value="USD">USD</option>
-					</select>
+				<div class="w-1/3">
+					<div class="relative space-y-2 w-full">
+						<label for="currency" class="text-sm text-gray-300">Currency</label>
+						<select
+							name="currency"
+							id="currency"
+							class="p-2 w-full text-gray-100 rounded border border-gray-700 transition-colors appearance-none outline-none md:p-3 bg-gray-900/50 focus:border-primary"
+						>
+							<option value="RSD">RSD</option>
+							<option value="EUR">EUR</option>
+							<option value="USD">USD</option>
+						</select>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="1.2"
+							stroke="currentColor"
+							class="absolute right-2.5 top-1/2 ml-1 w-5 h-5"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
+							/>
+						</svg>
+					</div>
 				</div>
 			</div>
-
-			<!-- <div class="space-y-2">
-				<label for="type" class="text-sm text-gray-300">Type</label>
-				<div
-					class="grid grid-cols-2 gap-2 p-1.5 w-full text-gray-100 rounded border border-gray-700 md:p-3 bg-gray-900/50"
-				>
-					<label class="relative">
-						<input type="radio" name="type" value="income" class="sr-only peer" checked />
-						<div
-							class="p-1 text-center rounded transition-all cursor-pointer md:p-2 peer-checked:bg-primary peer-checked:text-white hover:bg-primary/20"
-						>
-							Income
-						</div>
-					</label>
-
-					<label class="relative">
-						<input type="radio" name="type" value="expense" class="sr-only peer" />
-						<div
-							class="p-1 text-center rounded transition-all cursor-pointer md:p-2 peer-checked:bg-primary peer-checked:text-white hover:bg-primary/20"
-						>
-							Expense
-						</div>
-					</label>
-				</div>
-			</div> -->
-
-			<!-- <Input name="amount" type="text" placeholder="Amount" /> -->
-
-			<!-- <div class="space-y-2">
-				<label for="type" class="text-sm text-gray-300">Currency</label>
-				<div
-					class="grid grid-cols-3 gap-2 p-1.5 w-full text-gray-100 rounded border border-gray-700 md:p-3 bg-gray-900/50"
-				>
-					<label class="relative">
-						<input type="radio" name="currency" value="RSD" class="sr-only peer" checked />
-						<div
-							class="p-1 text-center rounded transition-all cursor-pointer md:p-2 peer-checked:bg-primary peer-checked:text-white hover:bg-primary/20"
-						>
-							RSD
-						</div>
-					</label>
-
-					<label class="relative">
-						<input type="radio" name="currency" value="EUR" class="sr-only peer" />
-						<div
-							class="p-1 text-center rounded transition-all cursor-pointer md:p-2 peer-checked:bg-primary peer-checked:text-white hover:bg-primary/20"
-						>
-							EUR
-						</div>
-					</label>
-					<label class="relative">
-						<input type="radio" name="currency" value="USD" class="sr-only peer" />
-						<div
-							class="p-1 text-center rounded transition-all cursor-pointer md:p-2 peer-checked:bg-primary peer-checked:text-white hover:bg-primary/20"
-						>
-							USD
-						</div>
-					</label>
-				</div>
-			</div> -->
 
 			<Input name="date" type="date" label="Date" value={new Date().toISOString().split('T')[0]} />
 
