@@ -262,12 +262,8 @@
 		</div>
 	</div>
 
-	<div class="p-2 mx-auto w-full max-w-xl rounded-lg chart-container bg-gray-800/40">
-		<canvas id="monthlyChart" />
-	</div>
-
-	<div class="pt-8 mx-auto max-w-xl">
-		<p class="text-sm">
+	<div class="p-3 mx-auto mb-6 max-w-xl rounded-lg bg-gray-800/50">
+		<p class="pb-2 text-sm">
 			{new Date().toLocaleString('default', { month: 'long' })} Savings:
 			<span class="font-bold text-primary">{convertToEUR(savingsEUR)}</span>
 		</p>
@@ -280,6 +276,10 @@
 				style="width: {savingsPercentage}%;"
 			/>
 		</div>
+	</div>
+
+	<div class="p-2 mx-auto w-full max-w-xl rounded-lg chart-container bg-gray-800/40">
+		<canvas id="monthlyChart" />
 	</div>
 
 	<h3 class="pt-4 text-base font-bold text-center">Recent Transactions</h3>
