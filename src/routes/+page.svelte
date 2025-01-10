@@ -108,12 +108,16 @@
 					{
 						label: 'Income',
 						data: monthlyData.income,
-						backgroundColor: '#02862c'
+						backgroundColor: '#02862c',
+						borderRadius: 4,
+						borderSkipped: false
 					},
 					{
 						label: 'Expenses',
 						data: monthlyData.expenses,
-						backgroundColor: '#9b3b3b'
+						backgroundColor: '#9b3b3b',
+						borderRadius: 4,
+						borderSkipped: false
 					}
 				]
 			},
@@ -121,6 +125,11 @@
 				scales: {
 					y: {
 						beginAtZero: true
+					}
+				},
+				plugins: {
+					legend: {
+						display: false
 					}
 				}
 			}
@@ -251,7 +260,7 @@
 						EUR exchange rate: <span class="text-primary">{rates.RSD}</span>
 					{/if}
 				</p>
-				<p class="text-xs font-bold uppercase">Total balance</p>
+				<p class="pb-2 text-xs font-semibold uppercase">Total balance</p>
 				<h2 class="text-xl font-extrabold uppercase">
 					{convertToRSD(totalBalanceRSD)}
 				</h2>
@@ -279,6 +288,17 @@
 	</div>
 
 	<div class="p-2 mx-auto w-full max-w-xl rounded-lg chart-container bg-gray-800/40">
+		<div class="flex gap-4 justify-center">
+			<div class="flex gap-2 items-center">
+				<span class="block w-12 h-3.5 rounded bg-income" />
+				<span class="text-sm text-gray-500">Income</span>
+			</div>
+			<div class="flex gap-2 items-center">
+				<span class="block w-12 h-3.5 rounded bg-expense" />
+				<span class="text-sm text-gray-500">Expense</span>
+			</div>
+		</div>
+
 		<canvas id="monthlyChart" />
 	</div>
 
