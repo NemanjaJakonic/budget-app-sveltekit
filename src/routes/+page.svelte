@@ -217,10 +217,14 @@
 </script>
 
 {#if data.session}
-	<div class="flex justify-between py-4 mx-auto max-w-xl font-bold">
-		<p>Welcome back, {data.session.user.user_metadata.first_name}!</p>
+	<div class="flex justify-between py-4 mx-auto max-w-xl">
+		<p class="text-sm">
+			Welcome back, <span class="font-bold text-primary"
+				>{data.session.user.user_metadata.first_name}</span
+			>!
+		</p>
 		<form action="/logout" method="post">
-			<button class="flex hover:text-primary" type="submit">
+			<button class="flex text-sm hover:text-expense" type="submit">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					fill="none"
@@ -248,10 +252,10 @@
 					{/if}
 				</p>
 				<p class="text-xs font-bold uppercase">Total balance</p>
-				<h2 class="text-2xl font-extrabold uppercase">
+				<h2 class="text-xl font-extrabold uppercase">
 					{convertToRSD(totalBalanceRSD)}
 				</h2>
-				<h2 class="text-xl font-extrabold uppercase">
+				<h2 class="text-lg font-extrabold uppercase">
 					{convertToEUR(totalBalanceEUR)}
 				</h2>
 			</div>
@@ -265,21 +269,21 @@
 	<div class="pt-8 mx-auto max-w-xl">
 		<p class="text-sm">
 			{new Date().toLocaleString('default', { month: 'long' })} Savings:
-			<span class="font-bold">{convertToEUR(savingsEUR)}</span>
+			<span class="font-bold text-primary">{convertToEUR(savingsEUR)}</span>
 		</p>
-		<div class="relative w-full rounded border">
+		<div class="relative w-full rounded border border-gray-700">
 			<div class="flex absolute left-1/2 items-center h-full font-bold -translate-x-1/2">
 				{savingsPercentage.toFixed(2)}%
 			</div>
 			<div
-				class="flex justify-center items-center h-6 rounded-tl rounded-bl bg-primary"
+				class="flex justify-center items-center h-6 rounded-tl rounded-bl bg-primary/30"
 				style="width: {savingsPercentage}%;"
 			/>
 		</div>
 	</div>
 
-	<h3 class="pt-4 text-lg font-bold text-center text-primary">Recent Transactions</h3>
-	<div class="py-2 mx-auto w-full max-w-xl rounded-lg md:py-6">
+	<h3 class="pt-4 text-base font-bold text-center">Recent Transactions</h3>
+	<div class="pb-2 mx-auto w-full max-w-xl rounded-lg">
 		<ul>
 			{#each data.transactions.slice(0, 3) as transaction}
 				<li class="flex gap-4 items-center p-3 my-3 rounded-lg bg-gray-800/40">
