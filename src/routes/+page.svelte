@@ -290,11 +290,11 @@
 	<div class="p-2 mx-auto w-full max-w-xl rounded-lg chart-container bg-gray-800/40">
 		<div class="flex gap-4 justify-center">
 			<div class="flex gap-2 items-center">
-				<span class="block w-12 h-3.5 rounded bg-income" />
+				<span class="block w-8 h-2 rounded md:w-12 md:h-3.5 bg-income" />
 				<span class="text-sm text-gray-500">Income</span>
 			</div>
 			<div class="flex gap-2 items-center">
-				<span class="block w-12 h-3.5 rounded bg-expense" />
+				<span class="block w-8 h-2 rounded md:w-12 md:h-3.5 bg-expense" />
 				<span class="text-sm text-gray-500">Expense</span>
 			</div>
 		</div>

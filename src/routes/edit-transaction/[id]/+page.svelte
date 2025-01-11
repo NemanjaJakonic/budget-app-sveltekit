@@ -146,7 +146,12 @@
 				</div>
 			</div>
 
-			<Input name="date" type="date" value={new Date(date).toISOString().split('T')[0]} />
+			<Input
+				name="date"
+				type="date"
+				label="Date"
+				value={new Date(date).toISOString().split('T')[0]}
+			/>
 
 			<button
 				class="relative py-2 mt-4 w-full text-white rounded shadow-lg transition-all duration-300 md:py-3 bg-primary hover:bg-primary/60 disabled:opacity-70 shadow-primary/20"
