@@ -1,23 +1,23 @@
 {
-"name": "BudgetApp",
-"short_name": "This name will show in your Windows taskbar, in the start menu, and Android homescreen",
-"start_url": "The URL that should be loaded when your application is opened",
+"name": "Cha-Ching Chronicles",
+"short_name": "Cha-Ching Chronicles",
+"start_url": "/",
 "display": "standalone",
-"description": "A description for your application",
-"lang": " The default language of your application",
+"description": "A simple budget tracker for your daily expenses",
+"lang": "English",
 "dir": "auto",
-"theme_color": "#000000",
-"background_color": "#000000",
+"theme_color": "#1B2129",
+"background_color": "#1B2129",
 "orientation": "any",
 "icons": [
     {
-        "src": "https://www.pwabuilder.com/assets/icons/icon_512.png",
+        "src": "%sveltekit.assets%/logo.png",
         "sizes": "512x512",
         "type": "image/png",
         "purpose": "maskable"
     },
     {
-        "src": "https://www.pwabuilder.com/assets/icons/icon_192.png",
+        "src": "%sveltekit.assets%/logo.png",
         "sizes": "192x192",
         "type": "image/png",
         "purpose": "any"
@@ -34,7 +34,7 @@
 "related_applications": [
     {
         "platform":"windows",
-        "url": " The URL to your app in that app store"
+        "url": "The URL to your app in that app store"
     }
 ],
 "prefer_related_applications": false,
