@@ -67,6 +67,10 @@
 				</svg>
 			</a>
 		</span>
+		<span class="hover:text-primary">
+			<a href="/transactions"> Transactions </a>
+		</span>
+
 		<span>
 			<a
 				href="/add-transaction"
@@ -83,6 +87,9 @@
 					<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
 				</svg>
 			</a>
+		</span>
+		<span class="hover:text-primary">
+			<a href="/"> Something </a>
 		</span>
 		<span class="hover:text-primary">
 			<a href="/profile">
