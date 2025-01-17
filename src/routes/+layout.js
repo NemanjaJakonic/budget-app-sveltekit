@@ -23,9 +23,10 @@ export const load = async ({ fetch, data, depends }) => {
 
 		if (storedRates) {
 			const { rates: cachedRates, timestamp } = JSON.parse(storedRates);
-			const today = new Date().toISOString().split('T')[0];
+			const currentMonth = new Date().toISOString().slice(0, 7); // Gets YYYY-MM
+			const storedMonth = timestamp.slice(0, 7);
 
-			if (timestamp === today) {
+			if (storedMonth === currentMonth) {
 				console.log('Using cached rates');
 				rates = cachedRates;
 			}

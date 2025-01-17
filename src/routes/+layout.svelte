@@ -47,7 +47,10 @@
 		<div class="w-12 h-12 rounded-full border-t-2 border-b-2 animate-spin border-primary" />
 	</div>
 {:else}
-	<main class="container px-4 mx-auto md:px-0 min-h-[calc(100vh-3.5rem)]">
+	{#if data.session}
+		<Header session={data.session} />
+	{/if}
+	<main class="container px-4 mx-auto md:px-0 min-h-[calc(100vh-7rem)]">
 		<slot />
 	</main>
 	{#if data.session}

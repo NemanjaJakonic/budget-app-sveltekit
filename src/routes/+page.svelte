@@ -6,6 +6,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { Chart, registerables } from 'chart.js';
+	import { convertToRSD, convertToEUR, convertToUSD } from '$lib/utils';
 	Chart.register(...registerables);
 
 	let totalBalanceRSD = 0;
@@ -30,30 +31,6 @@
 		income: [],
 		expenses: []
 	};
-
-	function convertToRSD(amount) {
-		const currencyFormat = new Intl.NumberFormat('sr-Latn-RS', {
-			style: 'currency',
-			currency: 'EUR'
-		});
-		return currencyFormat.format(amount).replace('€', 'RSD');
-	}
-
-	function convertToEUR(amount) {
-		const currencyFormat = new Intl.NumberFormat('sr-Latn-RS', {
-			style: 'currency',
-			currency: 'EUR'
-		});
-		return currencyFormat.format(amount);
-	}
-
-	function convertToUSD(amount) {
-		const currencyFormat = new Intl.NumberFormat('sr-Latn-RS', {
-			style: 'currency',
-			currency: 'USD'
-		});
-		return currencyFormat.format(amount);
-	}
 
 	onMount(async () => {
 		totalBalanceRSD += transactions.reduce((accumulator, object) => {
@@ -226,33 +203,37 @@
 </script>
 
 {#if data.session}
-	<div class="flex justify-between py-4 mx-auto max-w-xl">
-		<p class="text-sm">
-			Welcome back, <span class="font-bold text-primary"
-				>{data.session.user.user_metadata.first_name}</span
-			>!
-		</p>
-		<form action="/logout" method="post">
-			<button class="flex text-sm hover:text-expense" type="submit">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke-width="1.5"
-					stroke="currentColor"
-					class="size-6"
-				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15"
-					/>
-				</svg>
-				<span>Log Out</span>
-			</button>
-		</form>
-	</div>
-	<div class="pb-4 mx-auto w-full max-w-xl rounded-lg md:py-6">
+	<!-- <div class="mx-auto my-4 max-w-xl">
+		<div class="flex justify-between items-center p-3 rounded-lg bg-gray-800/40">
+			<div class="flex gap-2 items-center">
+				<img src="/logo.png" alt="logo" class="size-10" />
+				<p class="text-sm">
+					Welcome back,
+					<span class="font-bold text-primary">{data.session.user.user_metadata.first_name}</span>!
+				</p>
+			</div>
+			<form action="/logout" method="post">
+				<button class="flex gap-1 items-center text-sm hover:text-expense" type="submit">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke-width="1.5"
+						stroke="currentColor"
+						class="size-6"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15"
+						/>
+					</svg>
+					<span>Log Out</span>
+				</button>
+			</form>
+		</div>
+	</div> -->
+	<div class="mx-auto mb-4 w-full max-w-xl">
 		<div class="p-3 rounded-lg bg-gray-800/40">
 			<div>
 				<p class="h-8 text-sm">
