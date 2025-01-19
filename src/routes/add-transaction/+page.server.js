@@ -1,4 +1,5 @@
 import { fail, redirect } from '@sveltejs/kit';
+import { cache } from '$lib/cache';
 
 export const actions = {
 	addTransaction: async ({ request, url, locals: { supabase, getSession } }) => {
@@ -32,6 +33,9 @@ export const actions = {
 		if (error) {
 			return fail(500, { message: 'Server error. Try again later.', success: false });
 		}
+
+		// Clear cache after successful addition
+		cache.clearTransactions(session.user.id);
 
 		throw redirect(303, '/');
 	}

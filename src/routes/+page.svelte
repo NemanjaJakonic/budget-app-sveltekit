@@ -1,6 +1,6 @@
 <script>
 	export let data;
-	import Footer from '$lib/components/Footer.svelte';
+
 	import { enhance } from '$app/forms';
 	import { onMount } from 'svelte';
 	import { invalidateAll } from '$app/navigation';
@@ -11,14 +11,13 @@
 
 	let totalBalanceRSD = 0;
 
-	const { session, transactions, supabase, profiles } = data;
+	const { transactions, profiles, rates } = data;
 
 	if (profiles.length) {
 		const profile = profiles[0];
 		totalBalanceRSD = profile.starting_balance;
 	}
 
-	let rates = data.rates;
 	let totalBalanceEUR = 0;
 	let savings = 0;
 	let savingsEUR = 0;
@@ -175,20 +174,20 @@
 		await invalidateAll();
 	});
 
-	async function deleteTransaction({ request }) {
-		const session = await getSession();
-		const formData = await request.formData();
-		const id = formData.get('id');
-		const { error } = await supabase
-			.from('transactions')
-			.delete()
-			.match({ id: id, user_id: session.user.id });
+	// async function deleteTransaction({ request }) {
+	// 	const session = await getSession();
+	// 	const formData = await request.formData();
+	// 	const id = formData.get('id');
+	// 	const { error } = await supabase
+	// 		.from('transactions')
+	// 		.delete()
+	// 		.match({ id: id, user_id: session.user.id });
 
-		if (error) {
-			return fail(500, { message: 'Server error. Try again later.', success: false, email });
-		}
-		await invalidateAll();
-	}
+	// 	if (error) {
+	// 		return fail(500, { message: 'Server error. Try again later.', success: false, email });
+	// 	}
+	// 	await invalidateAll();
+	// }
 
 	let isDropdownOpen = {}; // Change to an object to track dropdown states by transaction ID
 

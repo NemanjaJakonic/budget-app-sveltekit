@@ -2,6 +2,8 @@
 	import { enhance } from '$app/forms';
 	import Input from '../../lib/components/Input.svelte';
 	import Error from '../../lib/components/Error.svelte';
+	import { cache } from '$lib/cache';
+	import { invalidateAll } from '$app/navigation';
 
 	export let data;
 	const { profiles } = data;

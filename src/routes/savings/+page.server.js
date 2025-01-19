@@ -1,10 +1,12 @@
+import { redirect } from '@sveltejs/kit';
 import { getTransactions } from '$lib/transactions';
 import { cache } from '$lib/cache';
 
-export async function load({ locals: { getSession } }) {
+export const load = async ({ locals: { getSession } }) => {
 	const session = await getSession();
 	const userId = session.user.id;
 
+	// Try to get from cache first
 	const cachedTransactions = cache.getTransactions(userId);
 	let transactions;
 
@@ -20,4 +22,4 @@ export async function load({ locals: { getSession } }) {
 	return {
 		transactions: transactions ?? []
 	};
-}
+};

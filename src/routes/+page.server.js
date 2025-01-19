@@ -1,39 +1,40 @@
 import { supabase } from '$lib/supabase';
 import { fail, redirect } from '@sveltejs/kit';
+import { getTransactions } from '$lib/transactions';
+import { cache } from '$lib/cache';
 
 export async function load({ locals: { getSession } }) {
 	const session = await getSession();
-	if (session) {
-		// Fetch transactions
-		const { data: transactions, error: transactionsError } = await supabase
-			.from('transactions')
-			.select()
-			.eq('user_id', session.user.id)
-			.order('date', { ascending: false });
-		if (transactionsError) {
-			console.log(transactionsError);
-		}
+	const userId = session.user.id;
 
-		// Fetch profiles
-		const { data: profiles, error: profilesError } = await supabase
-			.from('profiles')
-			.select()
-			.eq('user_id', session.user.id)
-			.limit(1);
-		if (profilesError) {
-			console.log(profilesError);
-		}
+	// Try to get from cache first
+	const cachedTransactions = cache.getTransactions(userId);
+	let transactions;
 
-		return {
-			transactions: transactions ?? [],
-			profiles: profiles ?? [] // Return profiles data
-		};
+	if (cachedTransactions) {
+		transactions = cachedTransactions;
 	} else {
-		return {
-			transactions: [],
-			profiles: [] // Return empty profiles data
-		};
+		// If not in cache, fetch from database
+		const { transactions: fetchedTransactions } = await getTransactions(userId);
+		transactions = fetchedTransactions;
+		// Store in cache
+		cache.setTransactions(userId, transactions);
 	}
+
+	// Fetch profiles
+	const { data: profiles, error: profilesError } = await supabase
+		.from('profiles')
+		.select()
+		.eq('user_id', session.user.id)
+		.limit(1);
+	if (profilesError) {
+		console.log(profilesError);
+	}
+
+	return {
+		transactions: transactions ?? [],
+		profiles: profiles ?? []
+	};
 }
 
 export const actions = {
@@ -48,9 +49,10 @@ export const actions = {
 			.match({ id: id, user_id: session.user.id });
 
 		if (error) {
-			return fail(500, { message: 'Server error. Try again later.', success: false, email });
+			return fail(500, { message: 'Server error. Try again later.', success: false });
 		}
 
-		//   throw redirect(303, '/')
+		// Clear cache after successful deletion
+		cache.clearTransactions(session.user.id);
 	}
 };

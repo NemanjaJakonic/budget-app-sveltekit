@@ -68,8 +68,8 @@
 </script>
 
 <div class="pt-8 mx-auto w-full max-w-xl rounded-lg md:pt-10">
-	<h1 class="pb-4 text-xl font-bold text-center text-primary">All Transactions</h1>
-	<div class="p-3 rounded-lg bg-gray-800/40">
+	<h1 class="pb-4 text-lg font-bold text-center text-white md:text-xl">All Transactions</h1>
+	<div class="py-3 rounded-lg">
 		<!-- Filters -->
 		<div class="flex gap-4">
 			<select
