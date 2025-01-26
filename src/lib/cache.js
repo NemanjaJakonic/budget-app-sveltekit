@@ -1,6 +1,6 @@
 class CacheEntry {
-	constructor(data, ttl = 5 * 60 * 1000) {
-		// 5 minutes default TTL
+	constructor(data, ttl = 60 * 60 * 1000) {
+		// 1 hour default TTL
 		this.data = data;
 		this.timestamp = Date.now();
 		this.ttl = ttl;
@@ -12,9 +12,11 @@ class CacheEntry {
 }
 
 let transactionCache = new Map();
+let profileCache = new Map();
 let exchangeRatesCache = null;
 
 export const cache = {
+	// Transactions
 	setTransactions: (userId, transactions, ttl) => {
 		transactionCache.set(userId, new CacheEntry(transactions, ttl));
 	},
@@ -37,6 +39,26 @@ export const cache = {
 		exchangeRatesCache = new CacheEntry(rates, 30 * 24 * 60 * 60 * 1000);
 	},
 
+	// Profiles
+	setProfile: (userId, profile, ttl) => {
+		// Default 1 hour TTL, same as transactions
+		profileCache.set(userId, new CacheEntry(profile, ttl));
+	},
+
+	getProfile: (userId) => {
+		const entry = profileCache.get(userId);
+		if (entry && entry.isValid()) {
+			return entry.data;
+		}
+		profileCache.delete(userId);
+		return null;
+	},
+
+	clearProfile: (userId) => {
+		profileCache.delete(userId);
+	},
+
+	// Exchange Rates
 	getExchangeRates: () => {
 		if (exchangeRatesCache && exchangeRatesCache.isValid()) {
 			return exchangeRatesCache.data;
@@ -49,8 +71,10 @@ export const cache = {
 		exchangeRatesCache = null;
 	},
 
+	// Clear all
 	clearAll: () => {
 		transactionCache.clear();
+		profileCache.clear();
 		exchangeRatesCache = null;
 	}
 };

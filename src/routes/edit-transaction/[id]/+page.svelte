@@ -65,7 +65,7 @@
 			</span>
 		</a>
 
-		<h1 class="text-xl font-bold md:text-2xl text-primary">Edit Transaction</h1>
+		<h1 class="text-lg font-bold text-white md:text-xl">Edit Transaction</h1>
 		<span />
 	</div>
 	<form
@@ -114,7 +114,7 @@
 			</div>
 			<div class="flex gap-4 items-end">
 				<div class="w-2/3">
-					<Input name="amount" type="text" value={amount} placeholder="Amount" label="Amount" />
+					<Input name="amount" type="number" value={amount} placeholder="Amount" label="Amount" />
 				</div>
 				<div class="w-1/3">
 					<div class="relative space-y-2 w-full">

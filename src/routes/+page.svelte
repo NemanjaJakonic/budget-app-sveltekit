@@ -251,7 +251,7 @@
 		</div>
 	</div>
 
-	<div class="p-3 mx-auto mb-6 max-w-xl rounded-lg bg-gray-800/50">
+	<div class="p-3 mx-auto mb-4 max-w-xl rounded-lg bg-gray-800/50">
 		<p class="pb-2 text-sm">
 			{new Date().toLocaleString('default', { month: 'long' })} Savings:
 			<span class="font-bold text-primary">{convertToEUR(savingsEUR)}</span>

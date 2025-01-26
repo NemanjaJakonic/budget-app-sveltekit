@@ -65,10 +65,49 @@
 	const handleDropdownFocusLoss = () => {
 		isDropdownOpen = {};
 	};
+
+	async function exportToExcel() {
+		try {
+			const response = await fetch('/api/export-transactions');
+			const blob = await response.blob();
+			const url = window.URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = 'transactions.xlsx';
+			document.body.appendChild(a);
+			a.click();
+			window.URL.revokeObjectURL(url);
+			a.remove();
+		} catch (error) {
+			console.error('Failed to export transactions:', error);
+		}
+	}
 </script>
 
 <div class="pt-8 mx-auto w-full max-w-xl rounded-lg md:pt-10">
-	<h1 class="pb-4 text-lg font-bold text-center text-white md:text-xl">All Transactions</h1>
+	<div class="flex justify-between items-center pb-4">
+		<h1 class="text-lg font-bold text-white md:text-xl">All Transactions</h1>
+		<button
+			on:click={exportToExcel}
+			class="flex gap-2 items-center px-4 py-2 text-sm text-white rounded-md transition-colors bg-primary hover:bg-primary/80"
+		>
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke-width="1.5"
+				stroke="currentColor"
+				class="size-5"
+			>
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
+				/>
+			</svg>
+			Export to Excel
+		</button>
+	</div>
 	<div class="py-3 rounded-lg">
 		<!-- Filters -->
 		<div class="flex gap-4">

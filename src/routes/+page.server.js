@@ -12,6 +12,7 @@ export async function load({ locals: { getSession } }) {
 	let transactions;
 
 	if (cachedTransactions) {
+		console.log('Using cached transactions');
 		transactions = cachedTransactions;
 	} else {
 		// If not in cache, fetch from database
@@ -21,14 +22,28 @@ export async function load({ locals: { getSession } }) {
 		cache.setTransactions(userId, transactions);
 	}
 
-	// Fetch profiles
-	const { data: profiles, error: profilesError } = await supabase
-		.from('profiles')
-		.select()
-		.eq('user_id', session.user.id)
-		.limit(1);
-	if (profilesError) {
-		console.log(profilesError);
+	// Try to get profile from cache first
+	const cachedProfile = cache.getProfile(userId);
+	let profiles;
+
+	if (cachedProfile) {
+		console.log('Using cached profile');
+		profiles = cachedProfile;
+	} else {
+		// If not in cache, fetch from database
+		const { data: fetchedProfiles, error: profilesError } = await supabase
+			.from('profiles')
+			.select()
+			.eq('user_id', userId)
+			.limit(1);
+
+		if (profilesError) {
+			console.log(profilesError);
+		}
+
+		profiles = fetchedProfiles;
+		// Store in cache
+		cache.setProfile(userId, profiles);
 	}
 
 	return {

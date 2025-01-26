@@ -49,7 +49,7 @@
 			</span>
 		</a>
 
-		<h1 class="text-xl font-bold md:text-2xl text-primary">Profile</h1>
+		<h1 class="text-lg font-bold text-white md:text-xl">Profile</h1>
 		<span />
 	</div>
 	<form
