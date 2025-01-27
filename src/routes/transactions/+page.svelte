@@ -84,12 +84,12 @@
 	}
 </script>
 
-<div class="pt-8 mx-auto w-full max-w-xl rounded-lg md:pt-10">
+<div class="mx-auto w-full max-w-xl rounded-lg md:pt-10">
 	<div class="flex justify-between items-center pb-4">
-		<h1 class="text-lg font-bold text-white md:text-xl">All Transactions</h1>
+		<h1 class="text-base font-bold text-white md:text-lg">All Transactions</h1>
 		<button
 			on:click={exportToExcel}
-			class="flex gap-2 items-center px-4 py-2 text-sm text-white rounded-md transition-colors bg-primary hover:bg-primary/80"
+			class="flex gap-2 items-center px-2 py-1.5 text-sm text-white rounded-md transition-colors md:py-2 md:px-4 bg-primary hover:bg-primary/80"
 		>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
