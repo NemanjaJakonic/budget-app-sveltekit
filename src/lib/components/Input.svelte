@@ -4,8 +4,8 @@
 	export let value = '';
 	export let placeholder = '';
 	export let label = '';
+	export let step = '';
 	export let disabled = false;
-	const capitalizedName = String(name).charAt(0).toUpperCase() + String(name).slice(1);
 </script>
 
 <div class="space-y-2">
@@ -19,5 +19,6 @@
 		{value}
 		{placeholder}
 		{disabled}
+		{step}
 	/>
 </div>
