@@ -14,13 +14,8 @@ export const load = async ({ locals: { getSession }, fetch }) => {
 		if (data && data.rates) {
 			rates = data.rates;
 			// Cache the rates
+			cache.setExchangeRates(rates);
 		}
-		rates = {
-			RSD: 117.11124,
-			EUR: 1,
-			USD: 1.0929802
-		};
-		cache.setExchangeRates(rates);
 	} else {
 		console.log('Using cached rates');
 	}

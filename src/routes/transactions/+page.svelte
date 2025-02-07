@@ -2,16 +2,18 @@
 	import { page } from '$app/stores';
 	import { enhance } from '$app/forms';
 	import { convertToRSD, convertToEUR, convertToUSD } from '$lib/utils';
+	import { goto } from '$app/navigation';
+	import { browser } from '$app/environment';
 
 	export let data;
 
 	let transactions = data.transactions;
-	let currentPage = 1;
+	let currentPage = parseInt($page.url.searchParams.get('page')) || 1;
 	const itemsPerPage = 6;
 
-	// Filter states
-	let selectedMonth = new Date().getMonth();
-	let selectedYear = new Date().getFullYear();
+	// Filter states - default to current month/year
+	let selectedMonth = parseInt($page.url.searchParams.get('month')) || new Date().getMonth() + 1; // +1 because getMonth() is 0-based
+	let selectedYear = parseInt($page.url.searchParams.get('year')) || new Date().getFullYear();
 
 	const months = [
 		'All Months',
@@ -49,11 +51,34 @@
 		currentPage * itemsPerPage
 	);
 
-	// Reset pagination when filters change
+	// Track previous filter values to detect changes
+	let previousMonth = selectedMonth;
+	let previousYear = selectedYear;
+
+	// Reset pagination only when filters change
 	$: {
-		selectedMonth;
-		selectedYear;
-		currentPage = 1;
+		if (selectedMonth !== previousMonth || selectedYear !== previousYear) {
+			currentPage = 1;
+			previousMonth = selectedMonth;
+			previousYear = selectedYear;
+		}
+	}
+
+	// Handle page changes
+	function changePage(newPage) {
+		if (newPage >= 1 && newPage <= totalPages) {
+			currentPage = newPage;
+		}
+	}
+
+	// Update URL when filters or page changes
+	$: if (browser) {
+		const url = new URL($page.url);
+
+		url.searchParams.set('page', currentPage);
+		url.searchParams.set('month', selectedMonth);
+		url.searchParams.set('year', selectedYear);
+		goto(url, { replaceState: true, keepfocus: true });
 	}
 
 	let isDropdownOpen = {}; // Track dropdown states by transaction ID
@@ -116,7 +141,7 @@
 				class="p-2 text-white rounded-md border border-gray-700 bg-gray-800/40"
 			>
 				{#each months as month, i}
-					<option value={i}>{month}</option>
+					<option value={i} selected={i === selectedMonth}>{month}</option>
 				{/each}
 			</select>
 
@@ -125,7 +150,7 @@
 				class="p-2 text-white rounded-md border border-gray-700 bg-gray-800/40"
 			>
 				{#each years as year}
-					<option value={year}>{year}</option>
+					<option value={year} selected={year === selectedYear}>{year}</option>
 				{/each}
 			</select>
 		</div>
@@ -202,7 +227,7 @@
 						<button
 							class="px-4 py-2 text-white rounded-md border border-gray-700 bg-gray-800/40 hover:bg-gray-700/40 disabled:opacity-50"
 							disabled={currentPage === 1}
-							on:click={() => currentPage--}
+							on:click={() => changePage(currentPage - 1)}
 						>
 							Previous
 						</button>
@@ -214,7 +239,7 @@
 						<button
 							class="px-4 py-2 text-white rounded-md border border-gray-700 bg-gray-800/40 hover:bg-gray-700/40 disabled:opacity-50"
 							disabled={currentPage === totalPages}
-							on:click={() => currentPage++}
+							on:click={() => changePage(currentPage + 1)}
 						>
 							Next
 						</button>
