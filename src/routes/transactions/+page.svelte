@@ -4,6 +4,7 @@
 	import { convertToRSD, convertToEUR, convertToUSD } from '$lib/utils';
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
+	import Dropdown from '$lib/components/Dropdown.svelte';
 
 	export let data;
 
@@ -178,46 +179,7 @@
 								? convertToUSD(transaction.amount)
 								: convertToRSD(transaction.amount)}
 						</span>
-
-						<div class="relative">
-							<button on:click={() => handleDropdownClick(transaction.id)}>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke-width="1.5"
-									stroke="currentColor"
-									class="size-6"
-								>
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
-									/>
-								</svg>
-							</button>
-							<div
-								on:focusout={handleDropdownFocusLoss}
-								class="absolute right-0 z-10 mt-2 w-40 bg-white rounded-md ring-1 ring-black ring-opacity-5 shadow-lg focus:outline-none"
-								style:visibility={isDropdownOpen[transaction.id] ? 'visible' : 'hidden'}
-							>
-								<div class="py-1">
-									<a
-										href={`/edit-transaction/${transaction.id}`}
-										class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-										role="menuitem">Edit</a
-									>
-									<form action="?/deleteTransaction" method="post" use:enhance>
-										<input type="hidden" name="id" value={transaction.id} />
-										<button
-											type="submit"
-											class="block px-4 py-2 w-full text-sm text-left text-red-500 hover:bg-gray-100"
-											>Delete</button
-										>
-									</form>
-								</div>
-							</div>
-						</div>
+						<Dropdown id={transaction.id} />
 					</li>
 				{/each}
 

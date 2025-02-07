@@ -1,12 +1,11 @@
 <script>
 	export let data;
 
-	import { enhance } from '$app/forms';
 	import { onMount } from 'svelte';
 	import { invalidateAll } from '$app/navigation';
-	import { page } from '$app/stores';
 	import { Chart, registerables } from 'chart.js';
 	import { convertToRSD, convertToEUR, convertToUSD } from '$lib/utils';
+	import Dropdown from '$lib/components/Dropdown.svelte';
 	Chart.register(...registerables);
 
 	let totalBalanceRSD = 0;
@@ -142,96 +141,11 @@
 
 		savingsPercentage = currentMonthIncome > 0 ? (savings / currentMonthIncome) * 100 : 0; // Calculate savings percentage
 
-		// const ctx = document.getElementById('monthlyChart').getContext('2d');
-		// new Chart(ctx, {
-		// 	type: 'doughnut',
-		// 	data: {
-		// 		labels: ['Income', 'Expenses'],
-		// 		datasets: [
-		// 			{
-		// 				data: [
-		// 					currentMonthTotals[currentMonth].income,
-		// 					currentMonthTotals[currentMonth].expenses
-		// 				],
-		// 				backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)']
-		// 			}
-		// 		]
-		// 	},
-		// 	options: {
-		// 		responsive: true,
-		// 		plugins: {
-		// 			legend: {
-		// 				position: 'top'
-		// 			},
-		// 			title: {
-		// 				display: true,
-		// 				text: 'Chart.js Pie Chart'
-		// 			}
-		// 		}
-		// 	}
-		// });
-
 		await invalidateAll();
 	});
-
-	// async function deleteTransaction({ request }) {
-	// 	const session = await getSession();
-	// 	const formData = await request.formData();
-	// 	const id = formData.get('id');
-	// 	const { error } = await supabase
-	// 		.from('transactions')
-	// 		.delete()
-	// 		.match({ id: id, user_id: session.user.id });
-
-	// 	if (error) {
-	// 		return fail(500, { message: 'Server error. Try again later.', success: false, email });
-	// 	}
-	// 	await invalidateAll();
-	// }
-
-	let isDropdownOpen = {}; // Change to an object to track dropdown states by transaction ID
-
-	const handleDropdownClick = (transactionId) => {
-		isDropdownOpen[transactionId] = !isDropdownOpen[transactionId]; // Toggle state for the specific transaction
-	};
-
-	const handleDropdownFocusLoss = ({ relatedTarget, currentTarget }) => {
-		// ... existing code ...
-		isDropdownOpen = {}; // Close all dropdowns when focus is lost
-	};
 </script>
 
 {#if data.session}
-	<!-- <div class="mx-auto my-4 max-w-xl">
-		<div class="flex justify-between items-center p-3 rounded-lg bg-gray-800/40">
-			<div class="flex gap-2 items-center">
-				<img src="/logo.png" alt="logo" class="size-10" />
-				<p class="text-sm">
-					Welcome back,
-					<span class="font-bold text-primary">{data.session.user.user_metadata.first_name}</span>!
-				</p>
-			</div>
-			<form action="/logout" method="post">
-				<button class="flex gap-1 items-center text-sm hover:text-expense" type="submit">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke-width="1.5"
-						stroke="currentColor"
-						class="size-6"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15"
-						/>
-					</svg>
-					<span>Log Out</span>
-				</button>
-			</form>
-		</div>
-	</div> -->
 	<div class="mx-auto mb-4 w-full max-w-xl">
 		<div class="p-3 rounded-lg bg-gray-800/40">
 			<div>
@@ -305,45 +219,7 @@
 						{/if}
 					</span>
 
-					<div class="relative">
-						<button on:click={() => handleDropdownClick(transaction.id)}>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke-width="1.5"
-								stroke="currentColor"
-								class="size-6"
-							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
-								/>
-							</svg>
-						</button>
-						<div
-							on:focusout={handleDropdownFocusLoss}
-							class="absolute right-0 z-10 mt-2 w-40 bg-white rounded-md ring-1 ring-black ring-opacity-5 shadow-lg focus:outline-none"
-							style:visibility={isDropdownOpen[transaction.id] ? 'visible' : 'hidden'}
-						>
-							<div class="py-1">
-								<a
-									href={`/edit-transaction/${transaction.id}`}
-									class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-									role="menuitem">Edit</a
-								>
-								<form action="?/deleteTransaction" method="post" use:enhance>
-									<input type="hidden" name="id" value={transaction.id} />
-									<button
-										type="submit"
-										class="block px-4 py-2 w-full text-sm text-left text-red-500 hover:bg-gray-100"
-										>Delete</button
-									>
-								</form>
-							</div>
-						</div>
-					</div>
+					<Dropdown id={transaction.id} />
 				</li>
 			{/each}
 		</ul>

@@ -17,7 +17,7 @@
 		if ($navigating) {
 			const timer = setTimeout(() => {
 				showSpinner = true;
-			}, 500);
+			}, 700);
 
 			// Clean up timeout if navigation finishes before delay
 			$navigating?.complete.then(() => {
