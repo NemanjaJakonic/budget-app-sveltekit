@@ -1,3 +1,24 @@
+# Expense Tracker App
+
+A simple and intuitive expense tracking application built with SvelteKit and Supabase. This application helps users manage their personal finances by tracking income and expenses.
+
+## Features
+
+- Add income and expense transactions
+- Categorize transactions
+- Real-time balance updates
+- Error handling and validation
+- Responsive design with Tailwind CSS
+
+## Tech Stack
+
+- **Frontend Framework**: SvelteKit
+- **Database**: Supabase
+- **Styling**: Tailwind CSS
+- **Authentication**: Supabase Auth
+
+## Project Structure
+
 # create-svelte
 
 Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
