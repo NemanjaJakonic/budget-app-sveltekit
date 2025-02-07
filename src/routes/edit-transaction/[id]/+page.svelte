@@ -121,7 +121,14 @@
 			</div>
 			<div class="flex gap-4 items-end">
 				<div class="w-2/3">
-					<Input name="amount" type="number" value={amount} placeholder="Amount" label="Amount" />
+					<Input
+						name="amount"
+						type="number"
+						value={amount}
+						placeholder="Amount"
+						label="Amount"
+						step="0.01"
+					/>
 				</div>
 				<div class="w-1/3">
 					<div class="relative space-y-2 w-full">
