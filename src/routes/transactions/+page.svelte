@@ -82,16 +82,6 @@
 		goto(url, { replaceState: true, keepfocus: true });
 	}
 
-	let isDropdownOpen = {}; // Track dropdown states by transaction ID
-
-	const handleDropdownClick = (transactionId) => {
-		isDropdownOpen[transactionId] = !isDropdownOpen[transactionId];
-	};
-
-	const handleDropdownFocusLoss = () => {
-		isDropdownOpen = {};
-	};
-
 	async function exportToExcel() {
 		try {
 			const response = await fetch('/api/export-transactions');
