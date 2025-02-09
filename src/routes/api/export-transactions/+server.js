@@ -3,11 +3,9 @@ import * as XLSX from 'xlsx';
 import { getTransactions } from '$lib/transactions';
 import { cache } from '$lib/cache';
 
-export async function GET({ locals: { getSession } }) {
+export async function GET({ locals: { supabase } }) {
 	try {
-		const session = await getSession();
-		const userId = session.user.id;
-		const { transactions } = await getTransactions(userId);
+		const { transactions } = await getTransactions(supabase);
 		let rates = cache.getExchangeRates();
 
 		if (!rates) {
@@ -18,11 +16,7 @@ export async function GET({ locals: { getSession } }) {
 			if (data && data.rates) {
 				rates = data.rates;
 			}
-			rates = {
-				RSD: 117.11124,
-				EUR: 1,
-				USD: 1.0929802
-			};
+
 			cache.setExchangeRates(rates);
 		}
 
