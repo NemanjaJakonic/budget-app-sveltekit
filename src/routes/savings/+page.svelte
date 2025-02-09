@@ -86,7 +86,7 @@
 </script>
 
 <div class="mx-auto w-full max-w-xl rounded-lg md:pt-10">
-	<div class="flex justify-between items-center pb-4 mx-auto max-w-lg">
+	<!-- <div class="flex justify-between items-center pb-4 mx-auto max-w-lg">
 		<button on:click={() => history.back()}>
 			<span class="text-white hover:text-primary">
 				<svg
@@ -115,7 +115,8 @@
 
 		<h1 class="text-base font-bold text-center text-white md:text-lg">Savings</h1>
 		<span />
-	</div>
+	</div> -->
+	<h1 class="pb-4 text-base font-bold text-center text-white md:text-lg">Savings</h1>
 
 	<div class="flex justify-between items-center pb-4">
 		<div class="relative">
