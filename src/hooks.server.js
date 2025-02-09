@@ -69,7 +69,7 @@ export const handle = async ({ event, resolve }) => {
 	// Protected routes logic
 	if (!session) {
 		// If user is not logged in and trying to access protected routes
-		if (event.url.pathname === '/') {
+		if (!['/login', '/register'].includes(event.url.pathname)) {
 			throw redirect(303, '/login');
 		}
 	} else {
