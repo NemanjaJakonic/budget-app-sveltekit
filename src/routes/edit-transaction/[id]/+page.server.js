@@ -1,4 +1,3 @@
-import { supabase } from '$lib/supabase';
 import { fail, redirect } from '@sveltejs/kit';
 
 export async function load({ params, locals: { supabase } }) {
@@ -6,7 +5,7 @@ export async function load({ params, locals: { supabase } }) {
 		data: { user }
 	} = await supabase.auth.getUser();
 
-	if (session) {
+	if (user) {
 		const { data, error } = await supabase
 			.from('transactions')
 			.select()
@@ -26,7 +25,9 @@ export async function load({ params, locals: { supabase } }) {
 
 export const actions = {
 	editTransaction: async ({ request, url, locals: { supabase, getSession } }) => {
-		const session = await getSession();
+		const {
+			data: { user }
+		} = await supabase.auth.getUser();
 
 		const formData = await request.formData();
 		const name = formData.get('name');
@@ -39,7 +40,7 @@ export const actions = {
 		const { error } = await supabase
 			.from('transactions')
 			.update({ name, amount, type, currency, date })
-			.match({ id: id, user_id: session.user.id });
+			.match({ id: id, user_id: user.id });
 
 		if (error) {
 			return fail(500, { message: 'Server error. Try again later.', success: false, email });
