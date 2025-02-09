@@ -2,8 +2,14 @@ import { fail, redirect } from '@sveltejs/kit';
 import { cache } from '$lib/cache';
 
 export const actions = {
-	addTransaction: async ({ request, url, locals: { supabase, getSession } }) => {
-		const session = await getSession();
+	addTransaction: async ({ request, locals: { supabase } }) => {
+		const {
+			data: { user }
+		} = await supabase.auth.getUser();
+
+		if (!user) {
+			throw redirect(302, '/login');
+		}
 
 		const formData = await request.formData();
 		const name = formData.get('name');
@@ -28,14 +34,14 @@ export const actions = {
 
 		const { error } = await supabase
 			.from('transactions')
-			.insert({ name, amount, user_id: session.user.id, date, type, currency });
+			.insert({ name, amount, user_id: user.id, date, type, currency });
 
 		if (error) {
 			return fail(500, { message: 'Server error. Try again later.', success: false });
 		}
 
 		// Clear cache after successful addition
-		cache.clearTransactions(session.user.id);
+		cache.clearTransactions(user.id);
 
 		throw redirect(303, '/');
 	}

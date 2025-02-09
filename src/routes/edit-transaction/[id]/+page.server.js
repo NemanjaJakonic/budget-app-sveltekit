@@ -1,14 +1,16 @@
 import { supabase } from '$lib/supabase';
 import { fail, redirect } from '@sveltejs/kit';
 
-export async function load({ params, locals: { getSession } }) {
-	const session = await getSession();
+export async function load({ params, locals: { supabase } }) {
+	const {
+		data: { user }
+	} = await supabase.auth.getUser();
 
 	if (session) {
 		const { data, error } = await supabase
 			.from('transactions')
 			.select()
-			.match({ user_id: session.user.id, id: params.id });
+			.match({ user_id: user.id, id: params.id });
 		if (error) {
 			console.log(error);
 		}
