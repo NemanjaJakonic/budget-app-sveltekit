@@ -2,13 +2,10 @@
 	import { enhance } from '$app/forms';
 	import Input from '../../lib/components/Input.svelte';
 	import Error from '../../lib/components/Error.svelte';
-	import { cache } from '$lib/cache';
-	import { invalidateAll } from '$app/navigation';
 
 	export let data;
-	const { profiles } = data;
-	const profile = profiles[0];
-	let id = profile.id;
+	const { profile } = data;
+
 	let starting_balance = profile.starting_balance;
 
 	let loading = false;
@@ -19,7 +16,7 @@
 
 		return async ({ result, update }) => {
 			if (result.type === 'failure') {
-				errorMessage = result.data?.message || 'Login failed. Please try again.';
+				errorMessage = result.data?.message || 'Update failed. Please try again.';
 			}
 
 			await update();
@@ -28,8 +25,8 @@
 	}
 </script>
 
-<div class="md:pt-10">
-	<div class="flex justify-between items-center pb-4 mx-auto max-w-lg">
+<div class="mx-auto max-w-lg md:pt-10">
+	<!-- <div class="flex justify-between items-center pb-4 mx-auto max-w-lg">
 		<button on:click={() => history.back()}>
 			<span class="text-white hover:text-primary">
 				<svg
@@ -58,14 +55,14 @@
 
 		<h1 class="text-base font-bold text-white md:text-lg">Profile</h1>
 		<span />
-	</div>
+	</div> -->
+	<h1 class="pb-4 text-base font-bold text-center text-white md:text-lg">Profile</h1>
 	<form
 		action="?/editProfile"
 		method="post"
 		use:enhance={handleSubmit}
-		class="p-4 mx-auto max-w-lg rounded-lg md:p-8 bg-gray-800/50"
+		class="p-4 rounded-lg md:p-8 bg-gray-800/50"
 	>
-		<input type="hidden" name="id" value={id} />
 		<div class="mb-2 h-10">
 			<Error message={errorMessage} />
 		</div>

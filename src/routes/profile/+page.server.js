@@ -1,35 +1,44 @@
 import { supabase } from '$lib/supabase';
 import { fail, redirect } from '@sveltejs/kit';
+import { cache } from '$lib/cache';
+export async function load({ locals: { supabase, getSession } }) {
+	const {
+		data: { user }
+	} = await supabase.auth.getUser();
 
-export async function load({ locals: { getSession } }) {
-	const session = await getSession();
-	if (session) {
-		const { data, error } = await supabase
-			.from('profiles')
-			.select()
-			.eq('user_id', session.user.id)
-			.limit(1);
-		if (error) {
-			console.log(error);
-		}
-		return {
-			profiles: data ?? []
-		};
-	} else {
-		return {
-			profiles: []
-		};
+	if (!user) {
+		throw redirect(302, '/login');
 	}
+
+	const { data, error } = await supabase
+		.from('profiles')
+		.select('*')
+		.eq('user_id', user.id)
+		.single();
+
+	if (error) {
+		console.error('Error:', error);
+		return { profile: null };
+	}
+
+	return {
+		profile: data
+	};
 }
 
 export const actions = {
-	editProfile: async ({ request, url, locals: { supabase, getSession } }) => {
-		const session = await getSession();
+	editProfile: async ({ request, locals: { supabase } }) => {
+		const {
+			data: { user }
+		} = await supabase.auth.getUser();
+
+		if (!user) {
+			throw redirect(302, '/login');
+		}
 
 		const formData = await request.formData();
-		const id = formData.get('id');
 		const starting_balance = formData.get('starting_balance');
-
+		console.log(formData);
 		if (!starting_balance) {
 			return fail(400, {
 				message: 'Please fill in all the fields!',
@@ -47,9 +56,15 @@ export const actions = {
 		const { error } = await supabase
 			.from('profiles')
 			.update({ starting_balance })
-			.match({ user_id: session.user.id });
+			.eq('user_id', user.id);
+
 		if (error) {
-			return fail(500, { message: 'Server error. Try again later.', success: false });
+			return fail(500, {
+				message: 'Server error. Try again later.',
+				success: false
+			});
+		} else {
+			cache.clearProfile(user.id);
 		}
 
 		throw redirect(303, '/');
