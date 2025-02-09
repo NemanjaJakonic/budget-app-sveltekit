@@ -1,73 +1,45 @@
-import { supabase } from '$lib/supabase';
 import { fail, redirect } from '@sveltejs/kit';
 import { getTransactions } from '$lib/transactions';
+import { getProfile } from '$lib/profiles';
 import { cache } from '$lib/cache';
 
-export async function load({ locals: { getSession } }) {
-	const session = await getSession();
-	const userId = session.user.id;
-
-	// Try to get from cache first
-	const cachedTransactions = cache.getTransactions(userId);
-	let transactions;
-
-	if (cachedTransactions) {
-		console.log('Using cached transactions');
-		transactions = cachedTransactions;
-	} else {
-		// If not in cache, fetch from database
-		const { transactions: fetchedTransactions } = await getTransactions(userId);
-		transactions = fetchedTransactions;
-		// Store in cache
-		cache.setTransactions(userId, transactions);
-	}
-
-	// Try to get profile from cache first
-	const cachedProfile = cache.getProfile(userId);
-	let profiles;
-
-	if (cachedProfile) {
-		console.log('Using cached profile');
-		profiles = cachedProfile;
-	} else {
-		// If not in cache, fetch from database
-		const { data: fetchedProfiles, error: profilesError } = await supabase
-			.from('profiles')
-			.select()
-			.eq('user_id', userId)
-			.limit(1);
-
-		if (profilesError) {
-			console.log(profilesError);
-		}
-
-		profiles = fetchedProfiles;
-		// Store in cache
-		cache.setProfile(userId, profiles);
-	}
+export async function load({ locals: { supabase } }) {
+	const { transactions } = await getTransactions(supabase);
+	const { profile } = await getProfile(supabase);
 
 	return {
-		transactions: transactions ?? [],
-		profiles: profiles ?? []
+		transactions: transactions,
+		profile: profile
 	};
 }
 
 export const actions = {
-	deleteTransaction: async ({ request, locals: { supabase, getSession } }) => {
-		const session = await getSession();
+	deleteTransaction: async ({ request, locals: { supabase } }) => {
+		const {
+			data: { user }
+		} = await supabase.auth.getUser();
+
+		if (!user) {
+			throw redirect(302, '/login');
+		}
+
 		const formData = await request.formData();
 		const id = formData.get('id');
 
 		const { error } = await supabase
 			.from('transactions')
 			.delete()
-			.match({ id: id, user_id: session.user.id });
+			.eq('id', id)
+			.eq('user_id', user.id);
 
 		if (error) {
-			return fail(500, { message: 'Server error. Try again later.', success: false });
+			return fail(500, {
+				message: 'Server error. Try again later.',
+				success: false
+			});
 		}
 
 		// Clear cache after successful deletion
-		cache.clearTransactions(session.user.id);
+		cache.clearTransactions(user.id);
 	}
 };

@@ -8,14 +8,11 @@
 	import Dropdown from '$lib/components/Dropdown.svelte';
 	Chart.register(...registerables);
 
-	let totalBalanceRSD = 0;
+	let totalBalanceRSD;
 
-	const { transactions, profiles, rates } = data;
+	const { transactions, profile, rates } = data;
 
-	if (profiles.length) {
-		const profile = profiles[0];
-		totalBalanceRSD = profile.starting_balance;
-	}
+	totalBalanceRSD = profile ? profile.starting_balance : 0;
 
 	let totalBalanceEUR = 0;
 	let savings = 0;
