@@ -1,3 +1,5 @@
+import { cache } from '$lib/cache';
+
 export const load = async ({ fetch }) => {
 	try {
 		const response = await fetch('/api/exchange-rates');

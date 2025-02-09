@@ -1,7 +1,7 @@
 <script>
 	import { enhance } from '$app/forms';
-	import Input from '../../lib/components/Input.svelte';
-	import Error from '../../lib/components/Error.svelte';
+	import Input from '$lib/components/Input.svelte';
+	import Error from '$lib/components/Error.svelte';
 
 	let loading = false;
 	let errorMessage = '';

@@ -1,6 +1,6 @@
 class CacheEntry {
-	constructor(data, ttl = 60 * 60 * 1000) {
-		// 1 hour default TTL
+	constructor(data, ttl = 7 * 24 * 60 * 60 * 1000) {
+		// 7 days default TTL
 		this.data = data;
 		this.timestamp = Date.now();
 		this.ttl = ttl;
@@ -41,7 +41,6 @@ export const cache = {
 
 	// Profiles
 	setProfile: (userId, profile, ttl) => {
-		// Default 1 hour TTL, same as transactions
 		profileCache.set(userId, new CacheEntry(profile, ttl));
 	},
 

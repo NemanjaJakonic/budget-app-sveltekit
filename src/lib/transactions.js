@@ -1,7 +1,17 @@
 import { cache } from '$lib/cache';
 
-export async function getTransactions(supabase) {
+export async function getTransactions(supabase, session) {
 	try {
+		// Try to get from cache first
+		const cachedTransactions = cache.getTransactions(session.user.id);
+		if (cachedTransactions) {
+			console.log('Using cached transactions');
+			return {
+				transactions: cachedTransactions
+			};
+		}
+
+		// If not in cache, fetch from database
 		const {
 			data: { user },
 			error: userError
@@ -15,16 +25,6 @@ export async function getTransactions(supabase) {
 			};
 		}
 
-		// Try to get from cache first
-		const cachedTransactions = cache.getTransactions(user.id);
-		if (cachedTransactions) {
-			console.log('Using cached transactions');
-			return {
-				transactions: cachedTransactions
-			};
-		}
-
-		// If not in cache, fetch from database
 		const { data: transactions, error: transactionsError } = await supabase
 			.from('transactions')
 			.select()

@@ -1,0 +1,222 @@
+<script>
+	export let data;
+
+	import { onMount } from 'svelte';
+	import { invalidateAll } from '$app/navigation';
+	import { Chart, registerables } from 'chart.js';
+	import { convertToRSD, convertToEUR, convertToUSD } from '$lib/utils';
+	import Dropdown from '$lib/components/Dropdown.svelte';
+	Chart.register(...registerables);
+
+	let totalBalanceRSD;
+
+	const { transactions, profile, rates } = data;
+
+	totalBalanceRSD = profile ? profile.starting_balance : 0;
+
+	let totalBalanceEUR = 0;
+	let savings = 0;
+	let savingsEUR = 0;
+	let savingsPercentage = 0;
+
+	const currentMonth = new Date().getMonth();
+
+	let monthlyData = {
+		labels: [],
+		income: [],
+		expenses: []
+	};
+
+	onMount(async () => {
+		totalBalanceRSD += transactions.reduce((accumulator, object) => {
+			let amount = object.amount;
+			switch (object.currency) {
+				case 'EUR':
+					amount *= rates.RSD;
+					break;
+				case 'USD':
+					amount *= rates.USD * rates.RSD;
+					break;
+				default:
+					amount = amount;
+					break;
+			}
+			if (object.type === 'income') {
+				return accumulator + amount;
+			} else if (object.type === 'expense') {
+				return accumulator - amount;
+			}
+		}, 0);
+
+		totalBalanceEUR = totalBalanceRSD / rates.RSD;
+
+		const currentYear = new Date().getFullYear();
+		const monthlyTotals = Array.from({ length: 12 }, () => ({ income: 0, expenses: 0 }));
+
+		data.transactions.forEach((transaction) => {
+			const transactionDate = new Date(transaction.date);
+			if (transactionDate.getFullYear() === currentYear) {
+				const month = transactionDate.getMonth();
+				if (transaction.type === 'income') {
+					monthlyTotals[month].income += transaction.amount;
+				} else if (transaction.type === 'expense') {
+					monthlyTotals[month].expenses += transaction.amount;
+				}
+			}
+		});
+
+		monthlyData.labels = monthlyTotals.map((_, index) =>
+			new Date(currentYear, index).toLocaleString('default', { month: 'long' })
+		);
+		monthlyData.income = monthlyTotals.map((total) => total.income);
+		monthlyData.expenses = monthlyTotals.map((total) => total.expenses);
+
+		const ctx = document.getElementById('monthlyChart').getContext('2d');
+		new Chart(ctx, {
+			type: 'bar',
+			data: {
+				labels: monthlyData.labels,
+				datasets: [
+					{
+						label: 'Income',
+						data: monthlyData.income,
+						backgroundColor: '#02862c',
+						borderRadius: 4,
+						borderSkipped: false
+					},
+					{
+						label: 'Expenses',
+						data: monthlyData.expenses,
+						backgroundColor: '#9b3b3b',
+						borderRadius: 4,
+						borderSkipped: false
+					}
+				]
+			},
+			options: {
+				scales: {
+					y: {
+						beginAtZero: true
+					}
+				},
+				plugins: {
+					legend: {
+						display: false
+					}
+				}
+			}
+		});
+
+		let currentMonthIncome = 0;
+		let currentMonthExpenses = 0;
+
+		data.transactions.forEach((transaction) => {
+			let amount = transaction.amount;
+			switch (transaction.currency) {
+				case 'EUR':
+					amount *= rates.RSD;
+					break;
+				case 'USD':
+					amount *= rates.USD * rates.RSD;
+					break;
+				default:
+					amount = amount;
+					break;
+			}
+			const transactionDate = new Date(transaction.date);
+			if (transactionDate.getMonth() === currentMonth) {
+				if (transaction.type === 'income') {
+					currentMonthIncome += amount;
+				} else if (transaction.type === 'expense') {
+					currentMonthExpenses += amount;
+				}
+			}
+		});
+
+		savings = currentMonthIncome - currentMonthExpenses;
+		savingsEUR = savings / rates.RSD;
+
+		savingsPercentage = currentMonthIncome > 0 ? (savings / currentMonthIncome) * 100 : 0; // Calculate savings percentage
+
+		await invalidateAll();
+	});
+</script>
+
+<div class="mx-auto mb-4 w-full max-w-xl">
+	<div class="p-3 rounded-lg bg-gray-800/40">
+		<div>
+			<p class="h-8 text-sm">
+				{#if rates}
+					EUR exchange rate: <span class="text-primary">{rates.RSD}</span>
+				{/if}
+			</p>
+			<p class="pb-2 text-xs font-semibold uppercase">Total balance</p>
+			<h2 class="text-xl font-extrabold uppercase">
+				{convertToRSD(totalBalanceRSD)}
+			</h2>
+			<h2 class="text-lg font-extrabold uppercase">
+				{convertToEUR(totalBalanceEUR)}
+			</h2>
+		</div>
+	</div>
+</div>
+
+<div class="p-3 mx-auto mb-4 max-w-xl rounded-lg bg-gray-800/50">
+	<p class="pb-2 text-sm">
+		{new Date().toLocaleString('default', { month: 'long' })} Savings:
+		<span class="font-bold text-primary">{convertToEUR(savingsEUR)}</span>
+	</p>
+	<div class="relative w-full rounded border border-gray-700">
+		<div class="flex absolute left-1/2 items-center h-full font-bold -translate-x-1/2">
+			{savingsPercentage.toFixed(2)}%
+		</div>
+		<div
+			class="flex justify-center items-center h-6 rounded-tl rounded-bl bg-primary/30"
+			style="width: {savingsPercentage}%;"
+		/>
+	</div>
+</div>
+
+<div class="p-2 mx-auto w-full max-w-xl rounded-lg chart-container bg-gray-800/40">
+	<div class="flex gap-4 justify-center">
+		<div class="flex gap-2 items-center">
+			<span class="block w-8 h-2 rounded md:w-12 md:h-3.5 bg-income" />
+			<span class="text-sm text-gray-500">Income</span>
+		</div>
+		<div class="flex gap-2 items-center">
+			<span class="block w-8 h-2 rounded md:w-12 md:h-3.5 bg-expense" />
+			<span class="text-sm text-gray-500">Expense</span>
+		</div>
+	</div>
+
+	<canvas id="monthlyChart" />
+</div>
+
+<h3 class="pt-4 text-base font-bold text-center">Recent Transactions</h3>
+<div class="pb-2 mx-auto w-full max-w-xl rounded-lg">
+	<ul>
+		{#each data.transactions.slice(0, 3) as transaction}
+			<li class="flex gap-4 items-center p-3 my-3 rounded-lg bg-gray-800/40">
+				<div class="flex-1 hover:text-primary">
+					<a href="/edit-transaction/{transaction.id}">{transaction.name}</a>
+					<p class="text-xs">{transaction.date}</p>
+				</div>
+				<span
+					class="flex-1 font-semibold text-right {transaction.type === 'expense'
+						? 'text-expense'
+						: 'text-income'}"
+					>{transaction.type === 'expense' ? '-' : ''}
+					{#if transaction.currency === 'EUR'}
+						{convertToEUR(transaction.amount)}
+					{:else if transaction.currency === 'USD'}
+						{convertToUSD(transaction.amount)}
+					{:else if transaction.currency === 'RSD'}
+						{convertToRSD(transaction.amount)}
+					{/if}
+				</span>
+
+				<Dropdown id={transaction.id} />
+			</li>
+		{/each}
+	</ul>
+</div>

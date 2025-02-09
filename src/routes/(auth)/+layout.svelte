@@ -1,5 +1,5 @@
 <script>
-	import '../app.css';
+	import '../../app.css';
 
 	import { invalidate } from '$app/navigation';
 	import { onMount } from 'svelte';
@@ -47,13 +47,9 @@
 		<div class="w-12 h-12 rounded-full border-t-2 border-b-2 animate-spin border-primary" />
 	</div>
 {:else}
-	{#if data.session}
-		<Header session={data.session} />
-	{/if}
+	<Header firstName={session ? session.user.user_metadata.first_name : ''} />
 	<main class="container px-4 mx-auto md:px-0 min-h-[calc(100vh-7rem)]">
 		<slot />
 	</main>
-	{#if data.session}
-		<Footer />
-	{/if}
+	<Footer />
 {/if}

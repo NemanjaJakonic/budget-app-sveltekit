@@ -1,5 +1,5 @@
 <script>
-	export let session;
+	export let firstName;
 </script>
 
 <div class="mb-6 h-14 bg-footerheader">
@@ -11,9 +11,10 @@
 				</a>
 				<p class="text-sm">
 					Welcome back,
-					<span class="font-bold text-primary">{session.user.user_metadata.first_name}</span>!
+					<span class="font-bold text-primary">{firstName}</span>!
 				</p>
 			</div>
+
 			<form action="/logout" method="post">
 				<button class="flex gap-1 items-center text-sm hover:text-expense" type="submit">
 					<svg

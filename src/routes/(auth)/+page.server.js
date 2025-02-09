@@ -3,8 +3,10 @@ import { getTransactions } from '$lib/transactions';
 import { getProfile } from '$lib/profiles';
 import { cache } from '$lib/cache';
 
-export async function load({ locals: { supabase } }) {
-	const { transactions } = await getTransactions(supabase);
+export async function load({ locals: { supabase, getSession } }) {
+	const session = await getSession();
+
+	const { transactions } = await getTransactions(supabase, session);
 	const { profile } = await getProfile(supabase);
 
 	return {
