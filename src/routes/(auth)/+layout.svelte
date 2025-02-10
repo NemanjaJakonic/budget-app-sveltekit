@@ -10,23 +10,26 @@
 	let { data, children } = $props();
 	let { session, supabase } = $derived(data);
 
-	let showSpinner = false;
+	let showSpinner = $state(false);
+	let timer;
 
-	$effect(() => {
-		if ($navigating) {
-			timer = setTimeout(() => {
-				$showSpinner = true;
-			}, 700);
+	// $effect(() => {
+	// 	if ($navigating) {
+	// 		if (timer) clearTimeout(timer);
 
-			// Clean up timeout if navigation finishes before delay
-			$navigating?.complete.then(() => {
-				clearTimeout(timer);
-				$showSpinner = false;
-			});
-		} else {
-			$showSpinner = false;
-		}
-	});
+	// 		timer = setTimeout(() => {
+	// 			showSpinner = true;
+	// 		}, 700);
+
+	// 		$navigating?.complete.then(() => {
+	// 			clearTimeout(timer);
+	// 			showSpinner = false;
+	// 		});
+	// 	} else {
+	// 		if (timer) clearTimeout(timer);
+	// 		showSpinner = false;
+	// 	}
+	// });
 
 	onMount(() => {
 		const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
@@ -39,14 +42,14 @@
 	});
 </script>
 
-{#if $navigating && showSpinner}
+<!-- {#if $navigating}
 	<div class="flex justify-center items-center min-h-screen">
 		<div class="w-12 h-12 rounded-full border-t-2 border-b-2 animate-spin border-primary"></div>
 	</div>
-{:else}
-	<Header firstName={session ? session.user.user_metadata.first_name : ''} />
-	<main class="container px-4 mx-auto md:px-0 min-h-[calc(100vh-7rem)]">
-		{@render children()}
-	</main>
-	<Footer />
-{/if}
+{:else} -->
+<Header firstName={session ? session.user.user_metadata.first_name : ''} />
+<main class="container px-4 mx-auto md:px-0 min-h-[calc(100vh-7rem)]">
+	{@render children()}
+</main>
+<Footer />
+<!-- {/if} -->

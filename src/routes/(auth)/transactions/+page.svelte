@@ -72,14 +72,34 @@
 		}
 	}
 
-	// Update URL when filters or page changes
-	$: if (browser) {
-		const url = new URL($page.url);
+	// Track previous URL state
+	let timeoutId;
+	let previousUrl = '';
 
-		url.searchParams.set('page', currentPage);
-		url.searchParams.set('month', selectedMonth);
-		url.searchParams.set('year', selectedYear);
-		goto(url, { replaceState: true, keepfocus: true });
+	// Update URL when filters or page changes - debounced
+	$: if (browser) {
+		clearTimeout(timeoutId);
+		timeoutId = setTimeout(() => {
+			const url = new URL($page.url);
+
+			// Only update if values have changed
+			if (url.searchParams.get('page') !== String(currentPage)) {
+				url.searchParams.set('page', currentPage);
+			}
+			if (url.searchParams.get('month') !== String(selectedMonth)) {
+				url.searchParams.set('month', selectedMonth);
+			}
+			const yearValue = selectedYear === 'All Years' ? '' : String(selectedYear);
+			if (url.searchParams.get('year') !== yearValue) {
+				yearValue ? url.searchParams.set('year', yearValue) : url.searchParams.delete('year');
+			}
+
+			// Only navigate if URL has actually changed
+			if (url.toString() !== previousUrl) {
+				previousUrl = url.toString();
+				goto(url, { replaceState: true, keepfocus: true });
+			}
+		}, 150); // 150ms debounce
 	}
 
 	async function exportToExcel() {
@@ -166,8 +186,8 @@
 							{transaction.currency === 'EUR'
 								? convertToEUR(transaction.amount)
 								: transaction.currency === 'USD'
-								? convertToUSD(transaction.amount)
-								: convertToRSD(transaction.amount)}
+									? convertToUSD(transaction.amount)
+									: convertToRSD(transaction.amount)}
 						</span>
 						<Dropdown id={transaction.id} />
 					</li>
