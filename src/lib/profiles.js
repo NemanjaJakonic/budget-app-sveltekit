@@ -1,22 +1,10 @@
 import { cache } from '$lib/cache';
+// import { supabase } from '$lib/supabase';
 
-export async function getProfile(supabase) {
+export async function getProfile(user_id, supabase) {
 	try {
-		const {
-			data: { user },
-			error: userError
-		} = await supabase.auth.getUser();
-
-		if (userError || !user) {
-			console.error('Auth error:', userError);
-			return {
-				profile: null,
-				error: 'Authentication failed'
-			};
-		}
-
 		// Try to get from cache first
-		const cachedProfile = cache.getProfile(user.id);
+		const cachedProfile = cache.getProfile(user_id);
 		if (cachedProfile) {
 			console.log('Using cached profile');
 			return {
@@ -28,17 +16,17 @@ export async function getProfile(supabase) {
 		const { data: profile, error: profileError } = await supabase
 			.from('profiles')
 			.select('*')
-			.eq('user_id', user.id)
+			.eq('user_id', user_id)
 			.single();
 
 		// If profile doesn't exist, create one
 		if (profileError?.code === 'PGRST116') {
 			// PostgreSQL "no rows" error
-			console.log('Creating new profile for user:', user.id);
+			console.log('Creating new profile for user:', user_id);
 			const { data: newProfile, error: insertError } = await supabase
 				.from('profiles')
 				.insert({
-					user_id: user.id,
+					user_id: user_id,
 					starting_balance: 0
 				})
 				.select()
@@ -53,7 +41,7 @@ export async function getProfile(supabase) {
 			}
 
 			// Store new profile in cache
-			cache.setProfile(user.id, newProfile);
+			cache.setProfile(user_id, newProfile);
 
 			return {
 				profile: newProfile
@@ -69,7 +57,7 @@ export async function getProfile(supabase) {
 		}
 
 		// Store in cache
-		cache.setProfile(user.id, profile);
+		cache.setProfile(user_id, profile);
 
 		return {
 			profile
@@ -97,7 +85,10 @@ export async function updateProfile(supabase, profileData) {
 			};
 		}
 
-		const { error } = await supabase.from('profiles').update(profileData).eq('user_id', user.id);
+		const { error } = await supabase
+			.from('profiles')
+			.update(profileData)
+			.eq('user_id', session.user.id);
 
 		if (error) {
 			console.error('Error updating profile:', error);
@@ -108,7 +99,7 @@ export async function updateProfile(supabase, profileData) {
 		}
 
 		// Clear cache after successful update
-		cache.clearProfile(user.id);
+		cache.clearProfile(session.user.id);
 
 		return {
 			success: true

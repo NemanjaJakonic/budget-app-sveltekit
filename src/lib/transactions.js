@@ -1,9 +1,10 @@
 import { cache } from '$lib/cache';
+// import { supabase } from '$lib/supabase';
 
-export async function getTransactions(supabase, session) {
+export async function getTransactions(user_id, supabase) {
 	try {
 		// Try to get from cache first
-		const cachedTransactions = cache.getTransactions(session.user.id);
+		const cachedTransactions = cache.getTransactions(user_id);
 		if (cachedTransactions) {
 			console.log('Using cached transactions');
 			return {
@@ -12,23 +13,22 @@ export async function getTransactions(supabase, session) {
 		}
 
 		// If not in cache, fetch from database
-		const {
-			data: { user },
-			error: userError
-		} = await supabase.auth.getUser();
+		// const {
+		// 	data: { user }
+		// } = await supabase.auth.getUser();
 
-		if (userError || !user) {
-			console.error('Auth error:', userError);
-			return {
-				transactions: [],
-				error: 'Authentication failed'
-			};
-		}
+		// if (userError || !user) {
+		// 	console.error('Auth error:', userError);
+		// 	return {
+		// 		transactions: [],
+		// 		error: 'Authentication failed'
+		// 	};
+		// }
 
 		const { data: transactions, error: transactionsError } = await supabase
 			.from('transactions')
 			.select()
-			.eq('user_id', user.id)
+			.eq('user_id', user_id)
 			.order('date', { ascending: false });
 
 		if (transactionsError) {
@@ -40,7 +40,7 @@ export async function getTransactions(supabase, session) {
 		}
 
 		// Store in cache
-		cache.setTransactions(user.id, transactions);
+		cache.setTransactions(user_id, transactions);
 
 		return {
 			transactions

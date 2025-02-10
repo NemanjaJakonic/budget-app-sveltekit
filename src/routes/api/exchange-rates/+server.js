@@ -18,7 +18,7 @@ async function fetchExchangeRates() {
 
 		const url = `https://api.apilayer.com/fixer/latest?symbols=${symbols}&base=${base}`;
 		const response = await fetch(url, requestOptions);
-
+		console.log(response);
 		const data = await response.json();
 
 		if (!data.success) {
@@ -44,6 +44,7 @@ async function fetchExchangeRates() {
 }
 
 export async function GET() {
+	console.log('here');
 	// Check cache first
 	const cachedRates = cache.getExchangeRates();
 	if (cachedRates) {

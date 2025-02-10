@@ -3,9 +3,10 @@ import * as XLSX from 'xlsx';
 import { getTransactions } from '$lib/transactions';
 import { cache } from '$lib/cache';
 
-export async function GET({ locals: { supabase } }) {
+export async function GET({ locals: { session, supabase } }) {
+	const user_id = session.user.id;
 	try {
-		const { transactions } = await getTransactions(supabase);
+		const { transactions } = await getTransactions(user_id, supabase);
 		let rates = cache.getExchangeRates();
 
 		if (!rates) {

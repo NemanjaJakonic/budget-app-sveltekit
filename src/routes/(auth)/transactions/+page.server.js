@@ -1,9 +1,9 @@
 import { getTransactions } from '$lib/transactions';
 
-export async function load({ locals: { supabase, getSession } }) {
-	const session = await getSession();
+export async function load({ locals: { session, supabase } }) {
+	const user_id = session.user.id;
 
-	const { transactions } = await getTransactions(supabase, session);
+	const { transactions } = await getTransactions(user_id, supabase);
 
 	return {
 		transactions: transactions

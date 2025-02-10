@@ -1,8 +1,9 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { getProfile, updateProfile } from '$lib/profiles';
 
-export async function load({ locals: { supabase } }) {
-	const { profile, error } = await getProfile(supabase);
+export async function load({ locals: { session, supabase } }) {
+	const user_id = session.user.id;
+	const { profile, error } = await getProfile(user_id, supabase);
 
 	return {
 		profile

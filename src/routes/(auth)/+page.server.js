@@ -3,11 +3,11 @@ import { getTransactions } from '$lib/transactions';
 import { getProfile } from '$lib/profiles';
 import { cache } from '$lib/cache';
 
-export async function load({ locals: { supabase, getSession } }) {
-	const session = await getSession();
+export async function load({ locals: { session, supabase } }) {
+	const user_id = session.user.id;
 
-	const { transactions } = await getTransactions(supabase, session);
-	const { profile } = await getProfile(supabase);
+	const { transactions } = await getTransactions(user_id, supabase);
+	const { profile } = await getProfile(user_id, supabase);
 
 	return {
 		transactions: transactions,
