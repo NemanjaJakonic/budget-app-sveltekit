@@ -36,7 +36,7 @@
 </script>
 
 <div class="relative">
-	<button data-button={id} on:click={() => handleDropdownClick(id)}>
+	<button aria-label="Dropdown" data-button={id} on:click={() => handleDropdownClick(id)}>
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			fill="none"
@@ -79,5 +79,5 @@
 		data-dropdown={id}
 		class="absolute right-0 z-10 mt-2 w-40 rounded-md ring-1 ring-black ring-opacity-5 shadow-lg bg-footerheader focus:outline-none"
 		style:visibility={openDropdown[id] ? 'visible' : 'hidden'}
-	/>
+	></div>
 </div>
