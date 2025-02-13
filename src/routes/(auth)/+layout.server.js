@@ -31,7 +31,7 @@ export const load = async ({ locals: { safeGetSession }, cookies }) => {
 	const { session } = await safeGetSession();
 	const rates = {
 		rates: {
-			RSD: 117.3,
+			RSD: 117.5,
 			EUR: 1,
 			USD: 1.0929802
 		},

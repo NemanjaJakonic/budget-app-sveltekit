@@ -1,5 +1,7 @@
 <script>
 	import { enhance } from '$app/forms';
+	import Input from '$lib/components/Input.svelte';
+	import Error from '$lib/components/Error.svelte';
 
 	let loading = false;
 	let errorMessage = '';
@@ -11,72 +13,60 @@
 		return async ({ result, update }) => {
 			if (result.type === 'failure') {
 				errorMessage = result.data?.message || 'Registration failed. Please try again.';
+				loading = false;
 			}
 
-			await update();
-			loading = false;
+			if (result.type === 'redirect') {
+				await update();
+			}
 		};
 	}
 </script>
 
-<div class="min-h-screen">
+<div class="pt-10 md:pt-20">
 	<form
 		action="?/register"
 		method="post"
 		use:enhance={handleSubmit}
-		class="p-8 mx-auto mt-20 max-w-md rounded-3xl bg-gray-800/50"
+		class="p-4 mx-auto max-w-md rounded-xl md:p-8 bg-gray-800/50"
 	>
-		<h1 class="mb-12 text-2xl font-semibold text-primary">Create Account</h1>
+		<h1 class="mb-12 text-2xl font-semibold text-center text-primary">Create Account</h1>
 
-		{#if errorMessage}
-			<div class="p-4 mb-6 text-sm text-center text-red-400 rounded-xl bg-red-900/20">
-				{errorMessage}
-			</div>
-		{/if}
+		<div class="mb-2 h-10">
+			<Error message={errorMessage} />
+		</div>
 
 		<div class="flex flex-col gap-6">
-			<div class="space-y-2">
-				<label for="first_name" class="text-sm text-gray-300">First Name</label>
-				<input
-					id="first_name"
-					class="p-3 w-full text-gray-100 rounded-xl border border-gray-700 transition-colors outline-none bg-gray-900/50 focus:border-primary"
-					type="text"
-					name="first_name"
-					placeholder="First Name"
-					disabled={loading}
-				/>
-			</div>
+			<Input
+				name="first_name"
+				type="text"
+				placeholder="First Name"
+				label="First Name"
+				disabled={loading}
+			/>
 
-			<div class="space-y-2">
-				<label for="last_name" class="text-sm text-gray-300">Last Name</label>
-				<input
-					id="last_name"
-					class="p-3 w-full text-gray-100 rounded-xl border border-gray-700 transition-colors outline-none bg-gray-900/50 focus:border-primary"
-					type="text"
-					name="last_name"
-					placeholder="Last Name"
-					disabled={loading}
-				/>
-			</div>
+			<Input
+				name="last_name"
+				type="text"
+				placeholder="Last Name"
+				label="Last Name"
+				disabled={loading}
+			/>
 
-			<div class="space-y-2">
-				<label for="email" class="text-sm text-gray-300">Email</label>
-				<input
-					id="email"
-					class="p-3 w-full text-gray-100 rounded-xl border border-gray-700 transition-colors outline-none bg-gray-900/50 focus:border-primary"
-					type="email"
-					name="email"
-					placeholder="example@example.com"
-					disabled={loading}
-				/>
-			</div>
+			<Input
+				name="email"
+				type="email"
+				placeholder="example@example.com"
+				label="Email"
+				disabled={loading}
+			/>
 
 			<div class="space-y-2">
 				<label for="password" class="text-sm text-gray-300">Password</label>
 				<div class="relative">
 					<input
 						id="password"
-						class="p-3 w-full text-gray-100 rounded-xl border border-gray-700 transition-colors outline-none bg-gray-900/50 focus:border-primary"
+						class="p-2 w-full text-gray-100 rounded border border-gray-700 transition-colors outline-none md:p-3 bg-gray-900/50 focus:border-primary"
 						type={showPassword ? 'text' : 'password'}
 						name="password"
 						placeholder="••••••••"
@@ -128,7 +118,7 @@
 			</div>
 
 			<button
-				class="relative py-3 mt-4 w-full text-white rounded-xl shadow-lg transition-all duration-300 bg-primary hover:brightness-75 disabled:opacity-70 shadow-primary/20"
+				class="relative py-2 mt-4 w-full text-white rounded shadow-lg transition-all duration-300 md:py-3 bg-primary hover:brightness-75 disabled:opacity-70 shadow-primary/20"
 				disabled={loading}
 			>
 				{#if loading}

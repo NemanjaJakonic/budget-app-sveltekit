@@ -2,6 +2,6 @@
 	import '../../app.css';
 </script>
 
-<main class="container px-4 mx-auto md:px-0 min-h-[calc(100vh-7rem)]">
+<main class="container px-4 mx-auto min-h-screen md:px-0">
 	<slot />
 </main>

@@ -12,10 +12,12 @@
 		return async ({ result, update }) => {
 			if (result.type === 'failure') {
 				errorMessage = result.data?.message || 'Login failed. Please try again.';
+				loading = false;
 			}
 
-			await update();
-			loading = false;
+			if (result.type === 'redirect') {
+				await update();
+			}
 		};
 	}
 </script>
