@@ -1,9 +1,11 @@
 import { fail, redirect } from '@sveltejs/kit';
 
-export async function load({ params, locals: { supabase } }) {
-	const {
-		data: { user }
-	} = await supabase.auth.getUser();
+export async function load({ params, locals: { supabase, session } }) {
+	const user = session.user;
+
+	if (!user) {
+		throw redirect(302, '/login');
+	}
 
 	if (user) {
 		const { data, error } = await supabase
@@ -24,7 +26,7 @@ export async function load({ params, locals: { supabase } }) {
 }
 
 export const actions = {
-	editTransaction: async ({ request, url, locals: { supabase, getSession } }) => {
+	editTransaction: async ({ request, url, locals: { supabase } }) => {
 		const {
 			data: { user }
 		} = await supabase.auth.getUser();
