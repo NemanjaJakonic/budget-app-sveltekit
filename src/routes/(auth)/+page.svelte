@@ -1,11 +1,13 @@
 <script>
 	export let data;
 
+	import { enhance } from '$app/forms';
 	import { onMount } from 'svelte';
 	import { invalidateAll } from '$app/navigation';
 	import { Chart, registerables } from 'chart.js';
 	import { convertToRSD, convertToEUR, convertToUSD } from '$lib/utils';
 	import Dropdown from '$lib/components/Dropdown.svelte';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	Chart.register(...registerables);
 
 	let totalBalanceRSD;
@@ -215,7 +217,40 @@
 					{/if}
 				</span>
 
-				<Dropdown id={transaction.id} />
+				<DropdownMenu.Root>
+					<DropdownMenu.Trigger
+						><svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="1.5"
+							stroke="currentColor"
+							class="size-6"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
+							/>
+						</svg></DropdownMenu.Trigger
+					>
+					<DropdownMenu.Content>
+						<DropdownMenu.Group>
+							<DropdownMenu.Item
+								><a href={`/edit-transaction/${transaction.id}`} class="block w-full">Edit</a
+								></DropdownMenu.Item
+							>
+							<DropdownMenu.Item
+								><form action="?/deleteTransaction" method="post" use:enhance class="block w-full">
+									<input type="hidden" name="id" value={transaction.id} />
+									<button type="submit" class="w-full text-left text-red-500">Delete</button>
+								</form></DropdownMenu.Item
+							>
+						</DropdownMenu.Group>
+					</DropdownMenu.Content>
+				</DropdownMenu.Root>
+
+				<!-- <Dropdown id={transaction.id} /> -->
 			</li>
 		{/each}
 	</ul>
