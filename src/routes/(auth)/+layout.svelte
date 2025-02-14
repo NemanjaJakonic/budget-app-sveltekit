@@ -5,6 +5,7 @@
 	import { onMount } from 'svelte';
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
+	import Transition from '$lib/components/Transition.svelte';
 	import { navigating } from '$app/stores';
 
 	let { data, children } = $props();
@@ -48,8 +49,12 @@
 	</div>
 {:else} -->
 <Header firstName={session ? session.user.user_metadata.first_name : ''} />
+
 <main class="container px-4 mx-auto md:px-0 min-h-[calc(100vh-7rem)]">
-	{@render children()}
+	<Transition key={data.url} duration={200}>
+		{@render children()}
+	</Transition>
 </main>
+
 <Footer />
 <!-- {/if} -->

@@ -1,7 +1,7 @@
 import { createBrowserClient, createServerClient, isBrowser } from '@supabase/ssr';
 import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public';
 
-export const load = async ({ data, depends, fetch }) => {
+export const load = async ({ data, depends, fetch, url }) => {
 	/**
 	 * Declare a dependency so the layout can be invalidated, for example, on
 	 * session refresh.
@@ -40,5 +40,5 @@ export const load = async ({ data, depends, fetch }) => {
 	// 	data: { user }
 	// } = await supabase.auth.getUser();
 
-	return { session, supabase, user, rates: data.rates };
+	return { session, supabase, user, rates: data.rates, url: url.pathname };
 };
