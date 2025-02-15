@@ -1,21 +1,40 @@
 <script>
-	export let data;
+	// let data = $props();
 	import { enhance } from '$app/forms';
 	import { onDestroy } from 'svelte';
 	import Error from '$lib/components/Error.svelte';
 	import Input from '$lib/components/Input.svelte';
+
+	import CalendarIcon from 'lucide-svelte/icons/calendar';
+	import { DateFormatter, getLocalTimeZone, today, CalendarDate } from '@internationalized/date';
+	import { cn } from '$lib/utils.js';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { Calendar } from '$lib/components/ui/calendar/index.js';
+	import * as Popover from '$lib/components/ui/popover/index.js';
+	import * as Select from '$lib/components/ui/select/index.js';
+
+	const { data } = $props();
 	const { transaction } = data;
 
-	let loading = false;
-	let errorMessage = '';
+	const df = new DateFormatter('en-GB', {
+		dateStyle: 'long'
+	});
+
+	let dateObj = new Date(transaction[0].date);
+
+	let loading = $state(false);
+	let errorMessage = $state('');
 	let errorTimeout;
 
-	let id = transaction[0].id;
-	let name = transaction[0].name;
-	let type = transaction[0].type;
-	let amount = transaction[0].amount;
-	let currency = transaction[0].currency;
-	let date = transaction[0].date;
+	let id = $state(transaction[0].id);
+	let name = $state(transaction[0].name);
+	let type = $state(transaction[0].type);
+	let amount = $state(transaction[0].amount);
+	let currency = $state(transaction[0].currency);
+
+	let date = $state(
+		new CalendarDate(dateObj.getFullYear(), dateObj.getMonth() + 1, dateObj.getDate())
+	);
 
 	function setTemporaryError(message) {
 		errorMessage = message;
@@ -63,30 +82,19 @@
 					<Input name="name" type="text" value={name} placeholder="Name" label="Name" />
 				</div>
 				<div class="w-1/3">
-					<div class="relative space-y-2">
+					<div class="space-y-2">
 						<label for="type" class="text-sm text-gray-300">Type</label>
-						<select
-							name="type"
-							id="type"
-							class="p-2 w-full text-gray-100 rounded border border-gray-700 transition-colors appearance-none outline-none md:p-3 bg-gray-900/50 focus:border-primary"
-						>
-							<option value="expense" selected={type === 'expense'}>Expense</option>
-							<option value="income" selected={type === 'income'}>Income</option>
-						</select>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke-width="1.2"
-							stroke="currentColor"
-							class="absolute right-2.5 top-1/2 ml-1 w-5 h-5"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
-							/>
-						</svg>
+
+						<Select.Root type="single" name="type" id="type" bind:value={type}>
+							<Select.Trigger
+								class="p-2 w-full text-gray-100 capitalize rounded border border-gray-700 transition-colors appearance-none outline-none md:p-3 bg-gray-900/50 focus:border-primary"
+								>{type}</Select.Trigger
+							>
+							<Select.Content>
+								<Select.Item value="expense">Expense</Select.Item>
+								<Select.Item value="income">Income</Select.Item>
+							</Select.Content>
+						</Select.Root>
 					</div>
 				</div>
 			</div>
@@ -104,39 +112,46 @@
 				<div class="w-1/3">
 					<div class="relative space-y-2 w-full">
 						<label for="currency" class="text-sm text-gray-300">Currency</label>
-						<select
-							name="currency"
-							id="currency"
-							class="p-2 w-full text-gray-100 rounded border border-gray-700 transition-colors appearance-none outline-none md:p-3 bg-gray-900/50 focus:border-primary"
-						>
-							<option value="RSD" selected={type === 'RSD'}>RSD</option>
-							<option value="EUR" selected={type === 'EUR'}>EUR</option>
-							<option value="USD" selected={type === 'USD'}>USD</option>
-						</select>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke-width="1.2"
-							stroke="currentColor"
-							class="absolute right-2.5 top-1/2 ml-1 w-5 h-5"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
-							/>
-						</svg>
+
+						<Select.Root type="single" name="currency" id="currency" bind:value={currency}>
+							<Select.Trigger
+								class="p-2 w-full text-gray-100 rounded border border-gray-700 transition-colors appearance-none outline-none md:p-3 bg-gray-900/50 focus:border-primary"
+								>{currency}</Select.Trigger
+							>
+							<Select.Content>
+								<Select.Item value="RSD">RSD</Select.Item>
+								<Select.Item value="EUR">EUR</Select.Item>
+								<Select.Item value="USD">USD</Select.Item>
+							</Select.Content>
+						</Select.Root>
 					</div>
 				</div>
 			</div>
 
-			<Input
-				name="date"
-				type="date"
-				label="Date"
-				value={new Date(date).toISOString().split('T')[0]}
-			/>
+			<div class="space-y-2">
+				<label for="date" class="text-sm text-gray-300">Date</label>
+				<Popover.Root>
+					<Popover.Trigger>
+						{#snippet child({ props })}
+							<Button
+								variant="outline"
+								class={cn(
+									'p-2 w-full text-gray-100 rounded border border-gray-700 transition-colors outline-none md:p-3 bg-gray-900/50 focus:border-primary',
+									!date && 'text-muted-foreground'
+								)}
+								{...props}
+							>
+								<CalendarIcon class="mr-2 size-4" />
+								{date}
+							</Button>
+						{/snippet}
+					</Popover.Trigger>
+					<Popover.Content class="p-0 w-auto">
+						<Calendar bind:value={date} type="single" initialFocus />
+					</Popover.Content>
+				</Popover.Root>
+				<input type="hidden" value={date} name="date" />
+			</div>
 
 			<button
 				class="relative py-2 mt-4 w-full text-white rounded shadow-lg transition-all duration-300 md:py-3 bg-primary hover:bg-primary/60 disabled:opacity-70 shadow-primary/20"
