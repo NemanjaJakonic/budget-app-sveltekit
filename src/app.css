@@ -80,7 +80,10 @@
 
 body {
 	font-family: 'Inter', sans-serif;
-	/* overflow: hidden; */
+}
+
+:global(body.transitioning) {
+  overflow: hidden;
 }
 
 /* * {

@@ -7,12 +7,21 @@
 	import Footer from '$lib/components/Footer.svelte';
 	import Transition from '$lib/components/Transition.svelte';
 	import { navigating } from '$app/stores';
+	import { isTransitioning } from '$lib/stores/transition';
 
 	let { data, children } = $props();
 	let { session, supabase } = $derived(data);
 
 	let showSpinner = $state(false);
 	let timer;
+
+	$effect(() => {
+		if ($isTransitioning) {
+			document.body.classList.add('transitioning');
+		} else {
+			document.body.classList.remove('transitioning');
+		}
+	});
 
 	// $effect(() => {
 	// 	if ($navigating) {
@@ -57,4 +66,5 @@
 </main>
 
 <Footer />
+
 <!-- {/if} -->
