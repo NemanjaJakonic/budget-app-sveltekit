@@ -4,8 +4,8 @@
 	import { convertToRSD, convertToEUR, convertToUSD } from '$lib/utils';
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
-	import Dropdown from '$lib/components/Dropdown.svelte';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import * as Select from '$lib/components/ui/select/index.js';
 
 	export let data;
 
@@ -148,23 +148,31 @@
 	<div class="py-3 rounded-lg">
 		<!-- Filters -->
 		<div class="flex gap-4">
-			<select
-				bind:value={selectedMonth}
-				class="p-2 text-white rounded-md border border-gray-700 bg-gray-800/40"
-			>
-				{#each months as month, i}
-					<option value={i} selected={i === selectedMonth}>{month}</option>
-				{/each}
-			</select>
+			<Select.Root type="single" name="type" id="type" bind:value={selectedMonth}>
+				<Select.Trigger
+					class="p-2 w-full text-gray-100 capitalize rounded border border-gray-700 transition-colors appearance-none outline-none md:p-3 bg-gray-900/50 focus:border-primary"
+					>{months[selectedMonth]}</Select.Trigger
+				>
+				<Select.Content>
+					{#each months as month, i}
+						<Select.Item value={i}>{month}</Select.Item>
+					{/each}
+					<!-- <Select.Item value="expense">Expense</Select.Item>
+					<Select.Item value="income">Income</Select.Item> -->
+				</Select.Content>
+			</Select.Root>
 
-			<select
-				bind:value={selectedYear}
-				class="p-2 text-white rounded-md border border-gray-700 bg-gray-800/40"
-			>
-				{#each years as year}
-					<option value={year} selected={year === selectedYear}>{year}</option>
-				{/each}
-			</select>
+			<Select.Root type="single" name="type" id="type" bind:value={selectedYear}>
+				<Select.Trigger
+					class="p-2 w-full text-gray-100 capitalize rounded border border-gray-700 transition-colors appearance-none outline-none md:p-3 bg-gray-900/50 focus:border-primary"
+					>{selectedYear}</Select.Trigger
+				>
+				<Select.Content>
+					{#each years as year}
+						<Select.Item value={year}>{year}</Select.Item>
+					{/each}
+				</Select.Content>
+			</Select.Root>
 		</div>
 	</div>
 
@@ -209,23 +217,21 @@
 								</svg></DropdownMenu.Trigger
 							>
 							<DropdownMenu.Content>
-								<DropdownMenu.Group>
-									<DropdownMenu.Item
-										><a href={`/edit-transaction/${transaction.id}`} class="block w-full">Edit</a
-										></DropdownMenu.Item
+								<DropdownMenu.Item
+									><a href={`/edit-transaction/${transaction.id}`} class="block w-full">Edit</a
+									></DropdownMenu.Item
+								>
+								<DropdownMenu.Item
+									><form
+										action="?/deleteTransaction"
+										method="post"
+										use:enhance
+										class="block w-full"
 									>
-									<DropdownMenu.Item
-										><form
-											action="?/deleteTransaction"
-											method="post"
-											use:enhance
-											class="block w-full"
-										>
-											<input type="hidden" name="id" value={transaction.id} />
-											<button type="submit" class="w-full text-left text-red-500">Delete</button>
-										</form></DropdownMenu.Item
-									>
-								</DropdownMenu.Group>
+										<input type="hidden" name="id" value={transaction.id} />
+										<button type="submit" class="w-full text-left text-red-500">Delete</button>
+									</form></DropdownMenu.Item
+								>
 							</DropdownMenu.Content>
 						</DropdownMenu.Root>
 					</li>

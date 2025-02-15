@@ -6,7 +6,6 @@
 	import { invalidateAll } from '$app/navigation';
 	import { Chart, registerables } from 'chart.js';
 	import { convertToRSD, convertToEUR, convertToUSD } from '$lib/utils';
-	import Dropdown from '$lib/components/Dropdown.svelte';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	Chart.register(...registerables);
 
@@ -235,22 +234,18 @@
 						</svg></DropdownMenu.Trigger
 					>
 					<DropdownMenu.Content>
-						<DropdownMenu.Group>
-							<DropdownMenu.Item
-								><a href={`/edit-transaction/${transaction.id}`} class="block w-full">Edit</a
-								></DropdownMenu.Item
-							>
-							<DropdownMenu.Item
-								><form action="?/deleteTransaction" method="post" use:enhance class="block w-full">
-									<input type="hidden" name="id" value={transaction.id} />
-									<button type="submit" class="w-full text-left text-red-500">Delete</button>
-								</form></DropdownMenu.Item
-							>
-						</DropdownMenu.Group>
+						<DropdownMenu.Item
+							><a href={`/edit-transaction/${transaction.id}`} class="block w-full">Edit</a
+							></DropdownMenu.Item
+						>
+						<DropdownMenu.Item
+							><form action="?/deleteTransaction" method="post" use:enhance class="block w-full">
+								<input type="hidden" name="id" value={transaction.id} />
+								<button type="submit" class="w-full text-left text-red-500">Delete</button>
+							</form></DropdownMenu.Item
+						>
 					</DropdownMenu.Content>
 				</DropdownMenu.Root>
-
-				<!-- <Dropdown id={transaction.id} /> -->
 			</li>
 		{/each}
 	</ul>
