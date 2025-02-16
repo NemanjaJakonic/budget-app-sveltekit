@@ -85,7 +85,7 @@
 	];
 </script>
 
-<div class="mx-auto w-full max-w-xl rounded-lg md:pt-10">
+<div class="mx-auto w-full max-w-xl rounded-lg">
 	<!-- <div class="flex justify-between items-center pb-4 mx-auto max-w-lg">
 		<button on:click={() => history.back()}>
 			<span class="text-white hover:text-primary">

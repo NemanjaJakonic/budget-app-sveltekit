@@ -67,7 +67,7 @@
 		});
 
 		monthlyData.labels = monthlyTotals.map((_, index) =>
-			new Date(currentYear, index).toLocaleString('default', { month: 'long' })
+			new Date(currentYear, index).toLocaleString('default', { month: 'short' })
 		);
 		monthlyData.income = monthlyTotals.map((total) => total.income);
 		monthlyData.expenses = monthlyTotals.map((total) => total.expenses);
@@ -146,11 +146,11 @@
 <div class="mx-auto mb-4 w-full max-w-xl">
 	<div class="p-3 rounded-lg bg-gray-800/40">
 		<div>
-			<p class="h-8 text-sm">
+			<!-- <p class="h-8 text-sm">
 				{#if rates}
 					EUR exchange rate: <span class="text-primary">{rates.RSD}</span>
 				{/if}
-			</p>
+			</p> -->
 			<p class="pb-2 text-xs font-semibold uppercase">Total balance</p>
 			<h2 class="text-xl font-extrabold uppercase">
 				{convertToRSD(totalBalanceRSD)}
@@ -194,7 +194,7 @@
 </div>
 
 <h3 class="pt-4 text-base font-bold text-center">Recent Transactions</h3>
-<div class="pb-2 mx-auto w-full max-w-xl rounded-lg">
+<div class="mx-auto w-full max-w-xl rounded-lg">
 	<ul>
 		{#each data.transactions.slice(0, 3) as transaction}
 			<li class="flex gap-4 items-center p-3 my-3 rounded-lg bg-gray-800/40">

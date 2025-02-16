@@ -2,7 +2,7 @@
 	export let firstName;
 </script>
 
-<div class="mb-6 h-14 bg-footerheader">
+<div class="h-14 bg-footerheader">
 	<div class="mx-auto max-w-xl">
 		<div class="flex justify-between items-center p-3">
 			<div class="flex gap-2 items-center">

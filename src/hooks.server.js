@@ -30,15 +30,17 @@ const supabase = async ({ event, resolve }) => {
 			return { session: null, user: null };
 		}
 
-		const {
-			data: { user },
-			error
-		} = await event.locals.supabase.auth.getUser();
+		// const {
+		// 	data: { user },
+		// 	error
+		// } = await event.locals.supabase.auth.getUser();
 
-		if (error) {
-			// JWT validation has failed
-			return { session: null, user: null };
-		}
+		const user = session.user;
+
+		// if (error) {
+		// 	// JWT validation has failed
+		// 	return { session: null, user: null };
+		// }
 
 		return { session, user };
 	};

@@ -6,7 +6,9 @@ export const load = async ({ data, depends, fetch, url }) => {
 	 * Declare a dependency so the layout can be invalidated, for example, on
 	 * session refresh.
 	 */
-	depends('supabase:auth');
+	if (isBrowser()) {
+		depends('supabase:auth');
+	}
 
 	const supabase = isBrowser()
 		? createBrowserClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
@@ -30,15 +32,14 @@ export const load = async ({ data, depends, fetch, url }) => {
 	 * safe, and on the server, it reads `session` from the `LayoutData`, which
 	 * safely checked the session using `safeGetSession`.
 	 */
-	const {
-		data: { session }
-	} = await supabase.auth.getSession();
+	const session =
+		isBrowser() && data.session ? data.session : (await supabase.auth.getSession()).data.session;
 
-	const user = session.user;
-
-	// const {
-	// 	data: { user }
-	// } = await supabase.auth.getUser();
-
-	return { session, supabase, user, rates: data.rates, url: url.pathname };
+	return {
+		session,
+		supabase,
+		user: session?.user,
+		rates: data.rates,
+		url: url.pathname
+	};
 };

@@ -56,7 +56,7 @@
 	});
 </script>
 
-<div class="mx-auto max-w-xl md:pt-10">
+<div class="mx-auto max-w-xl">
 	<h1 class="pb-4 text-base font-bold text-center text-white md:text-lg">Add Transaction</h1>
 	<form
 		action="?/addTransaction"
