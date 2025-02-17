@@ -69,7 +69,7 @@
 		action="?/editTransaction"
 		method="post"
 		use:enhance={handleSubmit}
-		class="p-4 rounded-lg md:p-8 bg-gray-800/50"
+		class="p-4 rounded md:p-8 bg-card/40"
 	>
 		<div class="mb-2 h-10">
 			<Error message={errorMessage} />
@@ -87,7 +87,7 @@
 
 						<Select.Root type="single" name="type" id="type" bind:value={type}>
 							<Select.Trigger
-								class="p-2 w-full text-gray-100 capitalize rounded border border-gray-700 transition-colors appearance-none outline-none md:p-3 bg-gray-900/50 focus:border-primary"
+								class="p-2 w-full text-gray-100 capitalize rounded border border-gray-700 transition-colors appearance-none outline-none focus:ring-offset-0 md:p-3 bg-footerheader focus:border-primary"
 								>{type}</Select.Trigger
 							>
 							<Select.Content>
@@ -115,7 +115,7 @@
 
 						<Select.Root type="single" name="currency" id="currency" bind:value={currency}>
 							<Select.Trigger
-								class="p-2 w-full text-gray-100 rounded border border-gray-700 transition-colors appearance-none outline-none md:p-3 bg-gray-900/50 focus:border-primary"
+								class="p-2 w-full text-gray-100 rounded border border-gray-700 transition-colors appearance-none outline-none focus:ring-offset-0 md:p-3 bg-footerheader focus:border-primary"
 								>{currency}</Select.Trigger
 							>
 							<Select.Content>
@@ -136,7 +136,7 @@
 							<Button
 								variant="outline"
 								class={cn(
-									'p-2 w-full text-gray-100 rounded border border-gray-700 transition-colors outline-none md:p-3 bg-gray-900/50 focus:border-primary',
+									'p-2 w-full text-gray-100 rounded border border-gray-700 transition-colors outline-none md:p-3 bg-footerheader focus:border-primary',
 									!date && 'text-muted-foreground'
 								)}
 								{...props}

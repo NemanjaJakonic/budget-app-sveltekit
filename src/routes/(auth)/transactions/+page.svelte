@@ -121,12 +121,12 @@
 	}
 </script>
 
-<div class="mx-auto w-full max-w-xl rounded-lg">
+<div class="mx-auto w-full max-w-xl rounded">
 	<div class="flex justify-between items-center pb-4">
 		<h1 class="text-base font-bold text-white md:text-lg">All Transactions</h1>
 		<button
 			on:click={exportToExcel}
-			class="flex gap-2 items-center px-2 py-1.5 text-sm text-white rounded-md transition-colors md:py-2 md:px-4 bg-primary hover:bg-primary/80"
+			class="flex gap-2 items-center px-2 py-1.5 text-sm text-white rounded transition-colors md:py-2 md:px-4 bg-primary hover:bg-primary/80"
 		>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
@@ -145,12 +145,12 @@
 			Export to Excel
 		</button>
 	</div>
-	<div class="py-3 rounded-lg">
+	<div class="py-3">
 		<!-- Filters -->
 		<div class="flex gap-4">
 			<Select.Root type="single" name="type" id="type" bind:value={selectedMonth}>
 				<Select.Trigger
-					class="p-2 w-full text-gray-100 capitalize rounded border border-gray-700 transition-colors appearance-none outline-none md:p-3 bg-gray-900/50 focus:border-primary"
+					class="p-2 w-full text-gray-100 capitalize rounded border border-gray-700 transition-colors appearance-none outline-none focus:ring-offset-0 md:p-3 bg-footerHeader focus:border-primary"
 					>{months[selectedMonth]}</Select.Trigger
 				>
 				<Select.Content>
@@ -164,7 +164,7 @@
 
 			<Select.Root type="single" name="type" id="type" bind:value={selectedYear}>
 				<Select.Trigger
-					class="p-2 w-full text-gray-100 capitalize rounded border border-gray-700 transition-colors appearance-none outline-none md:p-3 bg-gray-900/50 focus:border-primary"
+					class="p-2 w-full text-gray-100 capitalize rounded border border-gray-700 transition-colors appearance-none outline-none focus:ring-offset-0 md:p-3 bg-footerHeader focus:border-primary"
 					>{selectedYear}</Select.Trigger
 				>
 				<Select.Content>
@@ -177,17 +177,24 @@
 	</div>
 
 	<!-- Transactions List -->
-	<div class="pb-2 mx-auto w-full max-w-xl rounded-lg">
+	<div class="pb-2 mx-auto w-full max-w-xl">
 		<ul>
 			{#if paginatedTransactions.length > 0}
 				{#each paginatedTransactions as transaction}
-					<li class="flex gap-4 items-center p-3 my-3 rounded-lg bg-gray-800/40">
+					<li class="flex gap-4 items-center p-3 my-3 rounded bg-card/40">
 						<div class="flex-1 hover:text-primary">
-							<a href="/edit-transaction/{transaction.id}">{transaction.name}</a>
-							<p class="text-xs">{new Date(transaction.date).toLocaleDateString()}</p>
+							<a class="text-sm" href="/edit-transaction/{transaction.id}">{transaction.name}</a>
+							<p class="text-xs">
+								{new Date(transaction.date).toLocaleString('en-GB', {
+									weekday: 'long',
+									day: 'numeric',
+									month: 'short',
+									year: 'numeric'
+								})}
+							</p>
 						</div>
 						<span
-							class="flex-1 font-semibold text-right {transaction.type === 'expense'
+							class="flex-1 text-sm font-semibold text-right {transaction.type === 'expense'
 								? 'text-expense'
 								: 'text-income'}"
 						>

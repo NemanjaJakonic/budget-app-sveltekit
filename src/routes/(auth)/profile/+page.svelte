@@ -61,7 +61,7 @@
 		action="?/editProfile"
 		method="post"
 		use:enhance={handleSubmit}
-		class="p-4 rounded-lg md:p-8 bg-gray-800/50"
+		class="p-4 rounded md:p-8 bg-card/40"
 	>
 		<div class="mb-2 h-10">
 			<Error message={errorMessage} />

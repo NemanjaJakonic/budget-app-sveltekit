@@ -2,7 +2,7 @@
 	export let firstName;
 </script>
 
-<div class="h-14 bg-footerheader">
+<div class="h-14 border-b bg-footerheader border-card">
 	<div class="mx-auto max-w-xl">
 		<div class="flex justify-between items-center p-3">
 			<div class="flex gap-2 items-center">
@@ -11,7 +11,7 @@
 				</a>
 				<p class="text-sm">
 					Welcome back,
-					<span class="font-bold text-primary">{firstName}</span>!
+					<span class="text-secondary">{firstName}</span>!
 				</p>
 			</div>
 

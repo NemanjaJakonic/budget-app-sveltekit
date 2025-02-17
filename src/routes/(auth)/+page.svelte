@@ -81,14 +81,14 @@
 					{
 						label: 'Income',
 						data: monthlyData.income,
-						backgroundColor: '#02862c',
+						backgroundColor: '#4dd09e',
 						borderRadius: 4,
 						borderSkipped: false
 					},
 					{
 						label: 'Expenses',
 						data: monthlyData.expenses,
-						backgroundColor: '#9b3b3b',
+						backgroundColor: '#b9363b',
 						borderRadius: 4,
 						borderSkipped: false
 					}
@@ -144,7 +144,7 @@
 </script>
 
 <div class="mx-auto mb-4 w-full max-w-xl">
-	<div class="p-3 rounded-lg bg-gray-800/40">
+	<div class="p-3 rounded bg-card/40">
 		<div>
 			<!-- <p class="h-8 text-sm">
 				{#if rates}
@@ -162,24 +162,24 @@
 	</div>
 </div>
 
-<div class="p-3 mx-auto mb-4 max-w-xl rounded-lg bg-gray-800/50">
+<div class="p-3 mx-auto mb-4 max-w-xl rounded bg-card/40">
 	<p class="pb-2 text-sm">
 		{new Date().toLocaleString('default', { month: 'long' })} Savings:
-		<span class="font-bold text-primary">{convertToEUR(savingsEUR)}</span>
+		<span class="font-bold text-secondary">{convertToEUR(savingsEUR)}</span>
 	</p>
-	<div class="relative w-full rounded border border-gray-700">
+	<div class="relative w-full rounded border border-card">
 		<div class="flex absolute left-1/2 items-center h-full font-bold -translate-x-1/2">
 			{savingsPercentage.toFixed(2)}%
 		</div>
 		<div
-			class="flex justify-center items-center h-6 rounded-tl rounded-bl bg-primary/30"
+			class="flex justify-center items-center h-6 rounded-tl rounded-bl bg-primary/50"
 			style="width: {savingsPercentage}%;"
 		></div>
 	</div>
 </div>
 
-<div class="p-2 mx-auto w-full max-w-xl rounded-lg chart-container bg-gray-800/40">
-	<div class="flex gap-4 justify-center">
+<div class="p-2 mx-auto w-full max-w-xl rounded chart-container bg-card/40">
+	<div class="flex gap-4 justify-center pb-4">
 		<div class="flex gap-2 items-center">
 			<span class="block w-8 h-2 rounded md:w-12 md:h-3.5 bg-income"></span>
 			<span class="text-sm text-gray-500">Income</span>
@@ -193,17 +193,24 @@
 	<canvas id="monthlyChart"></canvas>
 </div>
 
-<h3 class="pt-4 text-base font-bold text-center">Recent Transactions</h3>
-<div class="mx-auto w-full max-w-xl rounded-lg">
+<h3 class="pt-4 text-sm font-bold text-center">Recent Transactions</h3>
+<div class="mx-auto w-full max-w-xl">
 	<ul>
 		{#each data.transactions.slice(0, 3) as transaction}
-			<li class="flex gap-4 items-center p-3 my-3 rounded-lg bg-gray-800/40">
+			<li class="flex gap-4 items-center p-3 my-3 rounded bg-card/40">
 				<div class="flex-1 hover:text-primary">
-					<a href="/edit-transaction/{transaction.id}">{transaction.name}</a>
-					<p class="text-xs">{transaction.date}</p>
+					<a class="text-sm" href="/edit-transaction/{transaction.id}">{transaction.name}</a>
+					<p class="text-xs">
+						{new Date(transaction.date).toLocaleString('en-GB', {
+							weekday: 'long',
+							day: 'numeric',
+							month: 'short',
+							year: 'numeric'
+						})}
+					</p>
 				</div>
 				<span
-					class="flex-1 font-semibold text-right {transaction.type === 'expense'
+					class="flex-1 text-sm font-semibold text-right {transaction.type === 'expense'
 						? 'text-expense'
 						: 'text-income'}"
 					>{transaction.type === 'expense' ? '-' : ''}

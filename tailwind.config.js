@@ -22,12 +22,13 @@ const config = {
 				background: 'hsl(var(--background) / <alpha-value>)',
 				foreground: 'hsl(var(--foreground) / <alpha-value>)',
 
-				primary: '#01819d',
-				secondary: '#1a1a1a',
+				primary: '#069494',
+				secondary: '#74b7b6',
 				primaryHover: '#025a5a',
-				expense: '#9b3b3b',
-				income: '#02862c',
+				expense: '#b9363b',
+				income: '#4dd09e',
 				footerheader: '#080a0e',
+				card: '#10191b',
 
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive) / <alpha-value>)',
@@ -45,10 +46,10 @@ const config = {
 					DEFAULT: 'hsl(var(--popover) / <alpha-value>)',
 					foreground: 'hsl(var(--popover-foreground) / <alpha-value>)'
 				},
-				card: {
-					DEFAULT: 'hsl(var(--card) / <alpha-value>)',
-					foreground: 'hsl(var(--card-foreground) / <alpha-value>)'
-				},
+				// card: {
+				// 	DEFAULT: 'hsl(var(--card) / <alpha-value>)',
+				// 	foreground: 'hsl(var(--card-foreground) / <alpha-value>)'
+				// },
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
@@ -66,9 +67,7 @@ const config = {
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
 			},
-			fontFamily: {
-				sans: [...fontFamily.sans]
-			},
+
 			keyframes: {
 				'accordion-down': {
 					from: { height: '0' },

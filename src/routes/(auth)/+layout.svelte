@@ -62,13 +62,13 @@
 <Header firstName={session ? session.user.user_metadata.first_name : ''} />
 
 <main class="container px-4 mx-auto md:px-0 min-h-[calc(100vh-7rem)]">
-	<GridBeam class="flex justify-start items-start pt-28 pl-4 sm:pl-16">
-		<div class="pt-6 pb-20">
-			<Transition key={data.url} duration={200}>
-				{@render children()}
-			</Transition>
-		</div>
-	</GridBeam>
+	<!-- <GridBeam class="flex justify-start items-start pt-28 pl-4 sm:pl-16"> -->
+	<div class="pt-6 pb-20">
+		<Transition key={data.url} duration={200}>
+			{@render children()}
+		</Transition>
+	</div>
+	<!-- </GridBeam> -->
 </main>
 
 <Footer />
