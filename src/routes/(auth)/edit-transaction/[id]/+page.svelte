@@ -1,7 +1,7 @@
 <script>
 	// let data = $props();
 	import { enhance } from '$app/forms';
-	import { onDestroy } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import Error from '$lib/components/Error.svelte';
 	import Input from '$lib/components/Input.svelte';
 
@@ -60,6 +60,10 @@
 	}
 	onDestroy(() => {
 		if (errorTimeout) clearTimeout(errorTimeout);
+	});
+
+	onMount(() => {
+		console.log(document.referrer);
 	});
 </script>
 

@@ -16,9 +16,9 @@
 		{type}
 		autocomplete="off"
 		{name}
-		{value}
 		{placeholder}
 		{disabled}
 		{step}
+		bind:value
 	/>
 </div>

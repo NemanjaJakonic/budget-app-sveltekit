@@ -30,6 +30,8 @@ const config = {
 				footerheader: '#080a0e',
 				card: '#10191b',
 
+				background: '#080a0e',
+
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive) / <alpha-value>)',
 					foreground: 'hsl(var(--destructive-foreground) / <alpha-value>)'

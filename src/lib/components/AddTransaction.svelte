@@ -5,7 +5,7 @@
 	import Input from '$lib/components/Input.svelte';
 
 	import CalendarIcon from 'lucide-svelte/icons/calendar';
-	import { DateFormatter, getLocalTimeZone } from '@internationalized/date';
+	import { DateFormatter, getLocalTimeZone, today, toLocalTimeZone } from '@internationalized/date';
 	import { cn } from '$lib/utils.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Calendar } from '$lib/components/ui/calendar/index.js';
@@ -14,22 +14,30 @@
 
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { transactionSchema } from '$lib/schemas.js';
-	import SuperDebug, { superForm } from 'sveltekit-superforms';
+	import SuperDebug, { superForm, defaults } from 'sveltekit-superforms';
 
-	let { data } = $props();
-	const { form, constraints, errors, enhance } = superForm(data.form, {
-		validators: zod(transactionSchema)
-	});
+	let { onClose = () => {} } = $props();
 
-	const df = new DateFormatter('en-GB', {
-		dateStyle: 'long'
-	});
+	const { form, constraints, errors, enhance, delayed } = superForm(
+		defaults(zod(transactionSchema)),
+		{
+			validators: zod(transactionSchema),
+			onResult: ({ result }) => {
+				if (result.type === 'redirect') {
+					onClose?.();
+				}
+			}
+		}
+	);
 
-	let date = $state('');
-	let currency = $state('RSD');
-	let type = $state('expense');
+	const df = new DateFormatter('en-GB');
 
-	let loading = $state(false);
+	let initialDate = $state(today(getLocalTimeZone()));
+
+	// let currency = $state('RSD');
+	// let type = $state('expense');
+
+	// let loading = $state(false);
 	let errorMessage = $state('');
 	let errorTimeout;
 
@@ -60,6 +68,7 @@
 		setTimeout(() => {
 			document.getElementById('name').focus();
 		}, 500);
+		$form.date = initialDate.toString();
 	});
 
 	onDestroy(() => {
@@ -67,14 +76,14 @@
 	});
 </script>
 
-<SuperDebug data={$form} />
+<!-- <SuperDebug data={$form} /> -->
 
-<div class="mx-auto max-w-xl">
-	<h1 class="pb-4 text-base font-bold text-center text-white md:text-lg">Add Transaction</h1>
-	<form action="?/addTransaction" method="post" use:enhance class="p-4 rounded md:p-8 bg-card/40">
-		<div class="mb-2 h-10">
+<div class="mx-auto max-w-xl bg-card/40">
+	<!-- <h1 class="pb-4 text-base font-bold text-center text-white md:text-lg">Add Transaction</h1> -->
+	<form action="/add-transaction?/addTransaction" method="post" use:enhance class="rounded">
+		<!-- <div class="mb-2 h-10">
 			<Error message={errorMessage} />
-		</div>
+		</div> -->
 
 		<div class="flex flex-col gap-4 md:gap-6">
 			<div class="flex gap-4 items-end">
@@ -157,33 +166,47 @@
 								variant="outline"
 								class={cn(
 									'p-2 w-full text-gray-100 rounded border border-gray-700 transition-colors outline-none md:p-3 bg-footerheader focus:border-primary',
-									!date && 'text-muted-foreground'
+									!initialDate && 'text-muted-foreground'
 								)}
 								{...props}
 							>
 								<CalendarIcon class="mr-2 size-4" />
-								{$form.date ? df.format($form.date.toDate(getLocalTimeZone())) : 'Select a date'}
+								{initialDate}
 							</Button>
 						{/snippet}
 					</Popover.Trigger>
 					<Popover.Content class="p-0 w-auto">
-						<Calendar bind:value={$form.date} type="single" initialFocus />
+						<Calendar
+							name="date"
+							bind:value={initialDate}
+							type="single"
+							initialFocus
+							onValueChange={(v) => {
+								if (v) {
+									$form.date = v.toString();
+								} else {
+									v = '';
+								}
+							}}
+						/>
 					</Popover.Content>
 				</Popover.Root>
-				<input
-					type="hidden"
-					value={$form.date ? new Date($form.date).toISOString().split('T')[0] : ''}
-					name="date"
-				/>
-			</div>
+				<input hidden bind:value={$form.date} name="date" />
 
+				<!-- <input
+					type="hidden"
+					name="date"
+					value={date ? new Date(date).toISOString().split('T')[0] : ''}
+				/> -->
+			</div>
+			<!-- value={$form.date ? new Date($form.date).toISOString().split('T')[0] : ''} -->
 			<!-- <Input name="date" type="date" label="Date" value={new Date().toISOString().split('T')[0]} /> -->
 
 			<button
 				class="relative py-2 mt-4 w-full text-white rounded shadow-lg transition-all duration-300 md:py-3 bg-primary hover:bg-primary/60 disabled:opacity-70 shadow-primary/20"
-				disabled={loading}
+				disabled={$delayed}
 			>
-				{#if loading}
+				{#if $delayed}
 					<div class="flex absolute inset-0 justify-center items-center">
 						<svg class="w-5 h-5 animate-spin" viewBox="0 0 24 24">
 							<circle
@@ -203,7 +226,7 @@
 						</svg>
 					</div>
 				{/if}
-				<span class={loading ? 'opacity-0' : ''}>SUBMIT</span>
+				<span class={$delayed ? 'opacity-0' : ''}>SUBMIT</span>
 			</button>
 		</div>
 	</form>

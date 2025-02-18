@@ -1,5 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
-import { getProfile, updateProfile } from '$lib/profiles';
+import { getProfile } from '$lib/profiles';
+import { cache } from '$lib/cache';
 
 export async function load({ locals: { session, supabase } }) {
 	const user_id = session.user.id;
@@ -29,15 +30,53 @@ export const actions = {
 			});
 		}
 
-		const { success, error } = await updateProfile(supabase, { starting_balance });
+		try {
+			const {
+				data: { user },
+				error: userError
+			} = await supabase.auth.getUser();
 
-		if (!success) {
-			return fail(500, {
-				message: error || 'Server error. Try again later.',
-				success: false
-			});
+			if (userError || !user) {
+				return {
+					success: false,
+					error: 'Authentication failed'
+				};
+			}
+
+			const { error } = await supabase
+				.from('profiles')
+				.update({ starting_balance })
+				.eq('user_id', user.id);
+
+			if (error) {
+				console.error('Error updating profile:', error);
+				return {
+					success: false,
+					error: 'Failed to update profile'
+				};
+			}
+
+			// Clear cache after successful update
+			cache.clearProfile(user.id);
+
+			throw redirect(303, '/');
+
+			// return {
+			// 	success: true
+			// };
+		} catch (error) {
+			console.error('Error updating profile:', error);
+			return {
+				success: false,
+				error: 'Failed to update profile'
+			};
 		}
 
-		throw redirect(303, '/');
+		// if (!success) {
+		// 	return fail(500, {
+		// 		message: error || 'Server error. Try again later.',
+		// 		success: false
+		// 	});
+		// }
 	}
 };

@@ -1,48 +1,44 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { cache } from '$lib/cache';
+import { z } from 'zod';
+import { superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
+
+import { transactionSchema } from '$lib/schemas.js';
+
+export async function load() {
+	const form = await superValidate(zod(transactionSchema));
+	return {
+		form
+	};
+}
 
 export const actions = {
 	addTransaction: async ({ request, locals: { supabase } }) => {
+		const form = await superValidate(request, zod(transactionSchema));
+
+		if (!form.valid) {
+			return fail(400, { form });
+		}
+
 		const {
 			data: { user }
 		} = await supabase.auth.getUser();
+		if (!user) throw redirect(302, '/login');
 
-		if (!user) {
-			throw redirect(302, '/login');
-		}
-
-		const formData = await request.formData();
-		const name = formData.get('name');
-		const amount = formData.get('amount');
-		const date = formData.get('date');
-		const type = formData.get('type');
-		const currency = formData.get('currency');
-
-		if (!name || !amount) {
-			return fail(400, {
-				message: 'Please fill in all the fields!',
-				success: false
-			});
-		}
-
-		if (isNaN(amount) || amount <= 0) {
-			return fail(400, {
-				message: 'Please enter a valid amount greater than 0!',
-				success: false
-			});
-		}
-
-		const { error } = await supabase
-			.from('transactions')
-			.insert({ name, amount, user_id: user.id, date, type, currency });
+		const { error } = await supabase.from('transactions').insert({
+			...form.data,
+			user_id: user.id
+		});
 
 		if (error) {
-			return fail(500, { message: 'Server error. Try again later.', success: false });
+			return fail(500, {
+				form,
+				message: 'Server error. Try again later.'
+			});
 		}
 
-		// Clear cache after successful addition
 		cache.clearTransactions(user.id);
-
 		throw redirect(303, '/');
 	}
 };

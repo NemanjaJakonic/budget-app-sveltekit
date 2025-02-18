@@ -4,7 +4,7 @@
 </script> -->
 
 <script>
-	// Lucide Svelte
+	import { MediaQuery } from 'svelte/reactivity';
 	import { Home, PencilLine, TvMinimalPlay } from 'lucide-svelte';
 	// Simple Icons : simpleicons.org
 	//    Shadcn Components
@@ -13,6 +13,13 @@
 	//   Major Components
 	import Dock from '$lib/components/Dock.svelte';
 	import DockIcon from '$lib/components/DockIcon.svelte';
+	import * as Drawer from '$lib/components/ui/drawer/index.js';
+	import * as Dialog from '$lib/components/ui/dialog/index.js';
+
+	import AddTransaction from '$lib/components/AddTransaction.svelte';
+
+	let open = false;
+	const isDesktop = new MediaQuery('(min-width: 768px)');
 
 	let navs = {
 		navbar: [
@@ -161,26 +168,58 @@
 <div class="fixed bottom-0 w-full h-14 bg-footerheader">
 	<Dock direction="middle" class="relative" let:mouseX let:distance let:magnification>
 		{#each navs.navbar as item}
-			<a href={item.href}>
-				<DockIcon {mouseX} {magnification} {distance}>
-					<Tooltip.Provider>
-						<Tooltip.Root>
-							<Tooltip.Trigger
-								class="p-3 mx-0 rounded-full transition-all duration-200 hover:bg-zinc-900/80"
-							>
-								{#if typeof item.icon === 'string'}
-									{@html item.icon}
-								{:else}
-									<svelte:component this={item.icon} size={22} strokeWidth={1.2} />
-								{/if}
-							</Tooltip.Trigger>
-							<Tooltip.Content sideOffset={8}>
-								<p>{item.label}</p>
-							</Tooltip.Content>
-						</Tooltip.Root>
-					</Tooltip.Provider>
-				</DockIcon>
-			</a>
+			{#if item.href === '/add-transaction'}
+				{#if isDesktop.current}
+					<Dialog.Root bind:open>
+						<Dialog.Trigger>{@html item.icon}</Dialog.Trigger>
+						<Dialog.Content class="sm:max-w-[425px]">
+							<Dialog.Header>
+								<Dialog.Title>Add Transaction</Dialog.Title>
+								<!-- <Dialog.Description>
+									Make changes to your profile here. Click save when you're done.
+								</Dialog.Description> -->
+							</Dialog.Header>
+							<AddTransaction onClose={() => (open = false)} />
+						</Dialog.Content>
+					</Dialog.Root>
+				{:else}
+					<Drawer.Root bind:open>
+						<Drawer.Trigger>{@html item.icon}</Drawer.Trigger>
+						<Drawer.Content>
+							<Drawer.Header>
+								<!-- <Drawer.Title>Are you sure absolutely sure?</Drawer.Title> -->
+								<Drawer.Description
+									><AddTransaction onClose={() => (open = false)} /></Drawer.Description
+								>
+							</Drawer.Header>
+							<Drawer.Footer>
+								<Drawer.Close>Cancel</Drawer.Close>
+							</Drawer.Footer>
+						</Drawer.Content>
+					</Drawer.Root>
+				{/if}
+			{:else}
+				<a href={item.href}>
+					<DockIcon {mouseX} {magnification} {distance}>
+						<Tooltip.Provider>
+							<Tooltip.Root>
+								<Tooltip.Trigger
+									class="p-3 mx-0 rounded-full transition-all duration-200 hover:bg-zinc-900/80"
+								>
+									{#if typeof item.icon === 'string'}
+										{@html item.icon}
+									{:else}
+										<svelte:component this={item.icon} size={22} strokeWidth={1.2} />
+									{/if}
+								</Tooltip.Trigger>
+								<Tooltip.Content sideOffset={8}>
+									<p>{item.label}</p>
+								</Tooltip.Content>
+							</Tooltip.Root>
+						</Tooltip.Provider>
+					</DockIcon>
+				</a>
+			{/if}
 		{/each}
 		<!-- <Separator orientation="vertical" class="h-full w-[0.6px]" /> -->
 		<!-- {#each navs.contact as item}

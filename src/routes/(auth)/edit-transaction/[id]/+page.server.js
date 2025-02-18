@@ -1,8 +1,8 @@
 import { fail, redirect } from '@sveltejs/kit';
+import { cache } from '$lib/cache';
 
 export async function load({ params, locals: { supabase, session } }) {
 	const user = session.user;
-
 	if (!user) {
 		throw redirect(302, '/login');
 	}
@@ -26,7 +26,7 @@ export async function load({ params, locals: { supabase, session } }) {
 }
 
 export const actions = {
-	editTransaction: async ({ request, url, locals: { supabase } }) => {
+	editTransaction: async ({ request, locals: { supabase } }) => {
 		const {
 			data: { user }
 		} = await supabase.auth.getUser();
@@ -45,9 +45,13 @@ export const actions = {
 			.match({ id: id, user_id: user.id });
 
 		if (error) {
-			return fail(500, { message: 'Server error. Try again later.', success: false, email });
+			return fail(500, { message: 'Server error. Try again later.', success: false });
 		}
 
+		// Clear cache after successful edit
+		cache.clearTransactions(user.id);
+
+		// const referer = request.headers.get('referer') || '/';
 		throw redirect(303, '/');
 	}
 };
