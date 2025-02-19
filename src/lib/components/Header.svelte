@@ -1,8 +1,8 @@
 <script>
-	export let firstName;
+	let { firstName } = $props();
 </script>
 
-<div class="h-14 border-b bg-footerheader border-card">
+<header class="sticky top-0 z-10 h-14 border-b bg-footerheader border-card">
 	<div class="mx-auto max-w-xl">
 		<div class="flex justify-between items-center p-3">
 			<div class="flex gap-2 items-center">
@@ -56,4 +56,4 @@ l161 -163 -594 0 c-557 0 -598 -2 -635 -19 -197 -91 -178 -374 29 -436 41 -13
 			</form>
 		</div>
 	</div>
-</div>
+</header>
