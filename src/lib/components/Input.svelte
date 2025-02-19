@@ -12,7 +12,7 @@
 	<label for={name} class="text-sm text-gray-300">{label}</label>
 	<input
 		id={name}
-		class="p-2 w-full text-gray-100 rounded border border-gray-700 transition-colors outline-none md:p-3 bg-footerheader focus:border-primary"
+		class="p-2 w-full leading-[21px] text-gray-100 rounded border border-gray-700 transition-colors outline-none bg-footerheader focus:border-primary"
 		{type}
 		autocomplete="off"
 		{name}

@@ -27,8 +27,6 @@
 
 	let initialDate = $state(today(getLocalTimeZone()));
 
-	let loading = $state(false);
-	let errorMessage = $state('');
 	let errorTimeout;
 
 	function setTemporaryError(message) {
@@ -38,21 +36,6 @@
 			errorMessage = '';
 		}, 3000);
 	}
-
-	// function handleSubmit() {
-	// 	return async ({ result, update }) => {
-	// 		loading = true;
-
-	// 		if (result.type === 'failure') {
-	// 			setTemporaryError(result.data.message);
-	// 			loading = false;
-	// 		}
-
-	// 		if (result.type === 'redirect') {
-	// 			await update();
-	// 		}
-	// 	};
-	// }
 
 	onMount(() => {
 		document.getElementById('name').focus();
@@ -64,7 +47,7 @@
 	});
 </script>
 
-<SuperDebug data={$form} />
+<!-- <SuperDebug data={$form} /> -->
 
 <div class="mx-auto max-w-xl">
 	<h1 class="pb-4 text-base font-bold text-center text-white md:text-lg">Add Transaction</h1>
@@ -73,7 +56,7 @@
 			<Error message={errorMessage} />
 		</div> -->
 
-		<div class="flex flex-col gap-4 md:gap-6">
+		<div class="flex flex-col gap-4">
 			<div class="flex gap-4 items-end">
 				<div class="w-2/3">
 					<Input name="name" type="text" placeholder="Name" label="Name" bind:value={$form.name} />
@@ -99,9 +82,9 @@
 						</Select.Root>
 					</div>
 					<small class="block h-6 text-red-400">
-						<!-- {#if $errors.name}
-							{$errors.name}
-						{/if} -->
+						{#if $errors.type}
+							{$errors.type}
+						{/if}
 					</small>
 				</div>
 			</div>
@@ -139,9 +122,9 @@
 						</Select.Root>
 					</div>
 					<small class="block h-6 text-red-400">
-						<!-- {#if $errors.name}
-							{$errors.name}
-						{/if} -->
+						{#if $errors.currency}
+							{$errors.currency}
+						{/if}
 					</small>
 				</div>
 			</div>
@@ -178,11 +161,16 @@
 						/>
 					</Popover.Content>
 				</Popover.Root>
+				<small class="block h-6 text-red-400">
+					{#if $errors.date}
+						{$errors.date}
+					{/if}
+				</small>
 				<input hidden bind:value={$form.date} name="date" />
 			</div>
 
 			<button
-				class="relative py-2 mt-4 w-full text-white rounded shadow-lg transition-all duration-300 md:py-3 bg-primary hover:bg-primary/60 disabled:opacity-70 shadow-primary/20"
+				class="relative py-2 mx-auto mt-4 w-11/12 text-white rounded shadow-lg transition-all duration-300 md:py-3 bg-primary hover:bg-primary/60 disabled:opacity-70 shadow-primary/20"
 				disabled={$delayed}
 			>
 				{#if $delayed}

@@ -1,11 +1,17 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { cache } from '$lib/cache';
+import { z } from 'zod';
+import { superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
+import { transactionSchema } from '$lib/schemas.js';
 
 export async function load({ params, locals: { supabase, session } }) {
 	const user = session.user;
 	if (!user) {
 		throw redirect(302, '/login');
 	}
+
+	const form = await superValidate(zod(transactionSchema));
 
 	if (user) {
 		const { data, error } = await supabase
@@ -16,7 +22,8 @@ export async function load({ params, locals: { supabase, session } }) {
 			console.log(error);
 		}
 		return {
-			transaction: data ?? []
+			transaction: data ?? [],
+			form
 		};
 	} else {
 		return {
@@ -26,22 +33,21 @@ export async function load({ params, locals: { supabase, session } }) {
 }
 
 export const actions = {
-	editTransaction: async ({ request, locals: { supabase } }) => {
+	editTransaction: async ({ request, params, locals: { supabase } }) => {
 		const {
 			data: { user }
 		} = await supabase.auth.getUser();
 
-		const formData = await request.formData();
-		const name = formData.get('name');
-		const amount = formData.get('amount');
-		const type = formData.get('type');
-		const currency = formData.get('currency');
-		const date = formData.get('date');
-		const id = formData.get('id');
+		const form = await superValidate(request, zod(transactionSchema));
+
+		if (!form.valid) {
+			return fail(400, { form });
+		}
+		const id = params.id;
 
 		const { error } = await supabase
 			.from('transactions')
-			.update({ name, amount, type, currency, date })
+			.update({ ...form.data })
 			.match({ id: id, user_id: user.id });
 
 		if (error) {
