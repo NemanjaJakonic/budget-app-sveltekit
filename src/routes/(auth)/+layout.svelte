@@ -7,7 +7,6 @@
 	import Footer from '$lib/components/Footer.svelte';
 	import Transition from '$lib/components/Transition.svelte';
 	import { navigating } from '$app/stores';
-	import { isTransitioning } from '$lib/stores/transition';
 
 	import GridBeam from '$lib/components/GridBeam.svelte';
 
@@ -16,14 +15,6 @@
 
 	let showSpinner = $state(false);
 	let timer;
-
-	$effect(() => {
-		if ($isTransitioning) {
-			document.body.classList.add('transitioning');
-		} else {
-			document.body.classList.remove('transitioning');
-		}
-	});
 
 	// $effect(() => {
 	// 	if ($navigating) {
@@ -64,7 +55,7 @@
 <main class="container px-4 mx-auto md:px-0 min-h-[calc(100vh-7rem)]">
 	<!-- <GridBeam class="flex justify-start items-start pt-28 pl-4 sm:pl-16"> -->
 	<div class="pt-6 pb-20">
-		<Transition key={data.url} duration={200}>
+		<Transition key={data.url}>
 			{@render children()}
 		</Transition>
 	</div>
