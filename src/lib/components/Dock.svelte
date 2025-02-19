@@ -10,7 +10,7 @@
 	export let direction = 'middle';
 
 	const dockVariants = cva(
-		'mx-auto w-max  h-[58px] p-2 flex gap-2 rounded border border-card supports-backdrop-blur:bg-white/10 supports-backdrop-blur:dark:bg-black/10 backdrop-blur-md'
+		'mx-auto w-max  h-[58px] flex gap-2 supports-backdrop-blur:bg-white/10 supports-backdrop-blur:dark:bg-black/10 backdrop-blur-md'
 	);
 
 	let dockElement;

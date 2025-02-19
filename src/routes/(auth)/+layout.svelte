@@ -8,8 +8,6 @@
 	import Transition from '$lib/components/Transition.svelte';
 	import { navigating } from '$app/stores';
 
-	import GridBeam from '$lib/components/GridBeam.svelte';
-
 	let { data, children } = $props();
 	let { session, supabase } = $derived(data);
 

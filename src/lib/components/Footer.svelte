@@ -1,25 +1,11 @@
-<!-- <script>
-	import { page } from '$app/stores';
-	import Animation from '$lib/components/Animation.svelte';
-</script> -->
-
 <script>
-	import { MediaQuery } from 'svelte/reactivity';
+	import { page } from '$app/stores';
+
 	import { Home, PencilLine, TvMinimalPlay } from 'lucide-svelte';
-	// Simple Icons : simpleicons.org
-	//    Shadcn Components
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
-	//import Separator from '$lib/components/ui/separator/separator.svelte';
-	//   Major Components
 	import Dock from '$lib/components/Dock.svelte';
 	import DockIcon from '$lib/components/DockIcon.svelte';
-	import * as Drawer from '$lib/components/ui/drawer/index.js';
-	import * as Dialog from '$lib/components/ui/dialog/index.js';
-
-	import AddTransaction from '$lib/components/AddTransaction.svelte';
-
-	let open = false;
-	const isDesktop = new MediaQuery('(min-width: 768px)');
+	import Animation from './Animation.svelte';
 
 	let navs = {
 		navbar: [
@@ -165,79 +151,36 @@
 	};
 </script>
 
-<div class="fixed bottom-0 w-full h-14 bg-footerheader">
+<!-- <footer class="fixed bottom-0 w-full h-14 border-t bg-footerheader border-card">
 	<Dock direction="middle" class="relative" let:mouseX let:distance let:magnification>
 		{#each navs.navbar as item}
-			{#if item.href === '/add-transaction'}
-				{#if isDesktop.current}
-					<Dialog.Root bind:open>
-						<Dialog.Trigger>{@html item.icon}</Dialog.Trigger>
-						<Dialog.Content class="sm:max-w-[425px]">
-							<Dialog.Header>
-								<Dialog.Title>Add Transaction</Dialog.Title>
-								<!-- <Dialog.Description>
-									Make changes to your profile here. Click save when you're done.
-								</Dialog.Description> -->
-							</Dialog.Header>
-							<AddTransaction onClose={() => (open = false)} />
-						</Dialog.Content>
-					</Dialog.Root>
-				{:else}
-					<Drawer.Root bind:open>
-						<Drawer.Trigger>{@html item.icon}</Drawer.Trigger>
-						<Drawer.Content>
-							<Drawer.Header>
-								<!-- <Drawer.Title>Are you sure absolutely sure?</Drawer.Title> -->
-								<Drawer.Description
-									><AddTransaction onClose={() => (open = false)} /></Drawer.Description
-								>
-							</Drawer.Header>
-							<Drawer.Footer>
-								<Drawer.Close>Cancel</Drawer.Close>
-							</Drawer.Footer>
-						</Drawer.Content>
-					</Drawer.Root>
-				{/if}
-			{:else}
-				<a href={item.href}>
-					<DockIcon {mouseX} {magnification} {distance}>
-						<Tooltip.Provider>
-							<Tooltip.Root>
-								<Tooltip.Trigger
-									class="p-3 mx-0 rounded-full transition-all duration-200 hover:bg-zinc-900/80"
-								>
-									{#if typeof item.icon === 'string'}
-										{@html item.icon}
-									{:else}
-										<svelte:component this={item.icon} size={22} strokeWidth={1.2} />
-									{/if}
-								</Tooltip.Trigger>
-								<Tooltip.Content sideOffset={8}>
-									<p>{item.label}</p>
-								</Tooltip.Content>
-							</Tooltip.Root>
-						</Tooltip.Provider>
-					</DockIcon>
-				</a>
-			{/if}
-		{/each}
-		<!-- <Separator orientation="vertical" class="h-full w-[0.6px]" /> -->
-		<!-- {#each navs.contact as item}
+			<a href={item.href}>
 				<DockIcon {mouseX} {magnification} {distance}>
-					<Tooltip.Root>
-						<Tooltip.Trigger class="rounded-full transition-all duration-200 hover:bg-zinc-900/80">
-							<img src={item.icon} alt={item.label} class="m-3 w-5 h-5" />
-						</Tooltip.Trigger>
-						<Tooltip.Content sideOffset={9}>
-							<p>{item.label}</p>
-						</Tooltip.Content>
-					</Tooltip.Root>
+					<Tooltip.Provider>
+						<Tooltip.Root>
+							<Tooltip.Trigger
+								class="p-3 mx-0 rounded-full transition-all duration-200 hover:bg-zinc-900/80"
+							>
+								{#if typeof item.icon === 'string'}
+									<div class:text-primary={$page.url.pathname === item.href}>
+										{@html item.icon}
+									</div>
+								{:else}
+									<svelte:component this={item.icon} size={22} strokeWidth={1.2} />
+								{/if}
+							</Tooltip.Trigger>
+							<Tooltip.Content sideOffset={8}>
+								<p>{item.label}</p>
+							</Tooltip.Content>
+						</Tooltip.Root>
+					</Tooltip.Provider>
 				</DockIcon>
-			{/each} -->
+			</a>
+		{/each}
 	</Dock>
-</div>
+</footer> -->
 
-<!-- <div class="fixed bottom-0 w-full h-14 bg-footerheader">
+<footer class="fixed bottom-0 w-full h-14 border-t bg-footerheader border-card">
 	<div class="flex gap-4 justify-around items-center mx-auto max-w-xl h-full">
 		<span class="flex-1">
 			<Animation>
@@ -444,4 +387,4 @@
 			</Animation>
 		</span>
 	</div>
-</div> -->
+</footer>
