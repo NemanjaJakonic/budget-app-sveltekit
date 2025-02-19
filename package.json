@@ -39,6 +39,7 @@
 		"@supabase/ssr": "^0.5.2",
 		"@supabase/supabase-js": "^2.48.1",
 		"chart.js": "^4.4.7",
+		"class-variance-authority": "^0.7.1",
 		"svelte-motion": "^0.12.2",
 		"xlsx": "^0.18.5"
 	}

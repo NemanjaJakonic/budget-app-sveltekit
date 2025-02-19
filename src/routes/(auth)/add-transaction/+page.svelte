@@ -60,7 +60,7 @@
 			<div class="flex gap-4 items-end">
 				<div class="w-2/3">
 					<Input name="name" type="text" placeholder="Name" label="Name" bind:value={$form.name} />
-					<small class="block h-6 text-red-400">
+					<small class="block h-6 text-xs text-red-400">
 						{#if $errors.name}
 							{$errors.name}
 						{/if}
