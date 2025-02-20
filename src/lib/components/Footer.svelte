@@ -1,10 +1,6 @@
 <script>
 	import { page } from '$app/stores';
 
-	import { Home, PencilLine, TvMinimalPlay } from 'lucide-svelte';
-	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
-	import Dock from '$lib/components/Dock.svelte';
-	import DockIcon from '$lib/components/DockIcon.svelte';
 	import Animation from './Animation.svelte';
 
 	let navs = {
@@ -150,35 +146,6 @@
 		]
 	};
 </script>
-
-<!-- <footer class="fixed bottom-0 w-full h-14 border-t bg-footerheader border-card">
-	<Dock direction="middle" class="relative" let:mouseX let:distance let:magnification>
-		{#each navs.navbar as item}
-			<a href={item.href}>
-				<DockIcon {mouseX} {magnification} {distance}>
-					<Tooltip.Provider>
-						<Tooltip.Root>
-							<Tooltip.Trigger
-								class="p-3 mx-0 rounded-full transition-all duration-200 hover:bg-zinc-900/80"
-							>
-								{#if typeof item.icon === 'string'}
-									<div class:text-primary={$page.url.pathname === item.href}>
-										{@html item.icon}
-									</div>
-								{:else}
-									<svelte:component this={item.icon} size={22} strokeWidth={1.2} />
-								{/if}
-							</Tooltip.Trigger>
-							<Tooltip.Content sideOffset={8}>
-								<p>{item.label}</p>
-							</Tooltip.Content>
-						</Tooltip.Root>
-					</Tooltip.Provider>
-				</DockIcon>
-			</a>
-		{/each}
-	</Dock>
-</footer> -->
 
 <footer class="fixed bottom-0 w-full h-14 border-t bg-footerheader border-card">
 	<div class="flex gap-4 justify-around items-center mx-auto max-w-xl h-full">

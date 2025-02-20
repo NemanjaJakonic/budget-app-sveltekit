@@ -6,14 +6,15 @@
 	<div class="mx-auto max-w-xl">
 		<div class="flex justify-between items-center p-3">
 			<div class="flex gap-2 items-center">
-				<a href="/">
-					<img src="/logo.png" alt="logo" class="size-10" />
-				</a>
 				<p class="text-sm">
 					Welcome back,
 					<span class="text-secondary">{firstName}</span>!
 				</p>
 			</div>
+
+			<a href="/">
+				<img src="/logo.svg" alt="logo" class="h-6" />
+			</a>
 
 			<form action="/logout" method="post">
 				<button class="flex gap-1 items-center text-sm hover:text-expense" type="submit">
