@@ -8,14 +8,20 @@
 	import { loginSchema } from '$lib/schemas.js';
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
 
+	let formElement;
 	let { data } = $props();
 	const { form, constraints, errors, enhance, delayed, message } = superForm(data.form, {
 		validators: zod(loginSchema)
 	});
 
 	function tryIt() {
-		$form.email = 'test@test.com';
-		$form.password = 'test123';
+		if (formElement) {
+			$form.email = 'test@test.com';
+			$form.password = 'test123';
+			document.getElementById('email').value = 'test@test.com';
+			document.getElementById('password').value = 'test123';
+			formElement.requestSubmit();
+		}
 	}
 </script>
 
@@ -23,38 +29,36 @@
 	<div class="p-4 mx-auto max-w-md rounded md:p-8 bg-card/40">
 		<!-- <h1 class="mb-4 text-2xl font-semibold text-center">Welcome</h1> -->
 		<img src="/logo.svg" alt="logo" class="mx-auto w-auto h-20" />
-
-		<form id="login" method="post" use:enhance>
-			<div class="flex z-10 justify-center items-center my-4">
-				<button
-					disabled={$delayed}
-					onclick={tryIt}
-					class={cn(
-						'group rounded border p-1 text-base text-white transition-all ease-in hover:cursor-pointer  border-white/5 bg-background hover:bg-neutral-800'
-					)}
+		<div class="flex z-10 justify-center items-center my-4">
+			<button
+				disabled={$delayed}
+				onclick={tryIt}
+				class={cn(
+					'group rounded border p-1 text-base text-white transition-all ease-in hover:cursor-pointer  border-white/5 bg-background hover:bg-neutral-800'
+				)}
+			>
+				<AnimatedShinyText
+					class="inline-flex justify-center items-center px-4 py-1 transition ease-out hover:duration-300 hover:text-neutral-400"
 				>
-					<AnimatedShinyText
-						class="inline-flex justify-center items-center px-4 py-1 transition ease-out hover:duration-300 hover:text-neutral-400"
+					<span>Try it now</span>
+
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="ml-1 transition-transform duration-300 ease-in-out size-3 group-hover:translate-x-0.5"
+						><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg
 					>
-						<span>Try it now</span>
-
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="24"
-							height="24"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							class="ml-1 transition-transform duration-300 ease-in-out size-3 group-hover:translate-x-0.5"
-							><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg
-						>
-					</AnimatedShinyText>
-				</button>
-			</div>
-
+				</AnimatedShinyText>
+			</button>
+		</div>
+		<form id="login" method="post" use:enhance bind:this={formElement}>
 			<div class="mb-2 h-10">
 				{#if $message}
 					<Error message={$message} />
