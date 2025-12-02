@@ -6,7 +6,10 @@ const config = {
 	kit: {
 		adapter: adapter({
 			out: '.dist'
-		})
+		}),
+		serviceWorker: {
+			register: false // We handle registration manually in hooks.client.js
+		}
 	}
 };
 
