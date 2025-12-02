@@ -2,7 +2,7 @@ import { json } from '@sveltejs/kit';
 import { getTransactions } from '$lib/transactions';
 import { cache } from '$lib/cache';
 import { getCategoryLabel, EXPENSE_CATEGORIES } from '$lib/constants';
-import { API_KEY, API_USER_ID } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 
 /**
  * GET /api/expenses-by-category
@@ -26,7 +26,7 @@ export async function GET({ url, request, fetch, locals: { session, supabase } }
 	
 	if (apiKey) {
 		// Validate API key
-		if (!API_KEY || apiKey !== API_KEY) {
+		if (!env.API_KEY || apiKey !== env.API_KEY) {
 			return json({ error: 'Invalid API key' }, { status: 401 });
 		}
 		
@@ -34,8 +34,8 @@ export async function GET({ url, request, fetch, locals: { session, supabase } }
 		const userIdParam = url.searchParams.get('user_id');
 		if (userIdParam) {
 			user_id = userIdParam;
-		} else if (API_USER_ID) {
-			user_id = API_USER_ID;
+		} else if (env.API_USER_ID) {
+			user_id = env.API_USER_ID;
 		} else {
 			return json({ 
 				error: 'User ID required. Pass user_id query param or configure API_USER_ID env variable.' 
