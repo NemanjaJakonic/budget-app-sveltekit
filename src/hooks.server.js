@@ -57,20 +57,11 @@ const authGuard = async ({ event, resolve }) => {
 	event.locals.session = session;
 	event.locals.user = user;
 
-	const pathname = event.url.pathname;
-
-	// API routes that handle their own authentication (via API key) - skip auth guard
-	if (pathname.startsWith('/api/expenses-by-category')) {
-		return resolve(event);
-	}
-
-	// Redirect unauthenticated users to login (except for login/register pages)
-	if (!event.locals.session && !['/login', '/register'].includes(pathname)) {
+	if (!event.locals.session && !['/login', '/register'].includes(event.url.pathname)) {
 		throw redirect(303, '/login');
 	}
 
-	// Redirect authenticated users away from login/register pages
-	if (event.locals.session && ['/login', '/register'].includes(pathname)) {
+	if (event.locals.session && ['/login', '/register'].includes(event.url.pathname)) {
 		throw redirect(303, '/');
 	}
 
