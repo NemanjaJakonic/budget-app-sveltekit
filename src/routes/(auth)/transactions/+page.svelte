@@ -6,6 +6,7 @@
 	import { browser } from '$app/environment';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
+	import { getCategoryLabel } from '$lib/constants.js';
 
 	export let data;
 
@@ -191,6 +192,11 @@
 									month: 'short',
 									year: 'numeric'
 								})}
+								{#if transaction.category}
+									<span class="ml-2 px-1.5 py-0.5 text-xs rounded bg-primary/20 text-primary"
+										>{getCategoryLabel(transaction.category)}</span
+									>
+								{/if}
 							</p>
 						</div>
 						<span

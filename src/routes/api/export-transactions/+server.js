@@ -64,6 +64,9 @@ export async function GET({ fetch, locals: { session, supabase } }) {
 				return {
 					Name: t.name,
 					Date: new Date(t.date).toLocaleDateString(),
+					Category: t.category
+						? t.category.charAt(0).toUpperCase() + t.category.slice(1)
+						: '',
 					Amount: amountInRSD
 				};
 			});
@@ -73,7 +76,8 @@ export async function GET({ fetch, locals: { session, supabase } }) {
 			excelData.push({
 				Name: 'TOTAL',
 				Date: '',
-				Amount: { f: `SUM(C2:C${lastDataRow})` }
+				Category: '',
+				Amount: { f: `SUM(D2:D${lastDataRow})` }
 			});
 
 			// Create worksheet
@@ -83,13 +87,14 @@ export async function GET({ fetch, locals: { session, supabase } }) {
 			worksheet['!cols'] = [
 				{ wch: 30 }, // Name
 				{ wch: 15 }, // Date
+				{ wch: 12 }, // Category
 				{ wch: 15 } // Amount
 			];
 
 			// Format amount column as currency
 			for (let i = 2; i <= lastDataRow + 1; i++) {
 				// +1 because we added the total row
-				const cellRef = `C${i}`;
+				const cellRef = `D${i}`;
 				if (!worksheet[cellRef]) continue;
 
 				worksheet[cellRef].z = '#,##0.00 "RSD"';
@@ -98,7 +103,7 @@ export async function GET({ fetch, locals: { session, supabase } }) {
 			// Style the total row
 			const totalRow = lastDataRow + 1;
 			worksheet[`A${totalRow}`] = { v: 'TOTAL', s: { font: { bold: true } } };
-			worksheet[`C${totalRow}`].s = { font: { bold: true } };
+			worksheet[`D${totalRow}`].s = { font: { bold: true } };
 
 			XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
 		});

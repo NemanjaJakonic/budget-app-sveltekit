@@ -7,6 +7,7 @@
 	import { Chart, registerables } from 'chart.js';
 	import { convertToRSD, convertToEUR, convertToUSD } from '$lib/utils';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import { getCategoryLabel } from '$lib/constants.js';
 	Chart.register(...registerables);
 
 	let totalBalanceRSD;
@@ -207,6 +208,11 @@
 							month: 'short',
 							year: 'numeric'
 						})}
+						{#if transaction.category}
+							<span class="ml-2 px-1.5 py-0.5 text-xs rounded bg-primary/20 text-primary"
+								>{getCategoryLabel(transaction.category)}</span
+							>
+						{/if}
 					</p>
 				</div>
 				<span

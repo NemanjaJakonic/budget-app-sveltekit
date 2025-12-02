@@ -16,6 +16,7 @@
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { transactionSchema } from '$lib/schemas.js';
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
+	import { EXPENSE_CATEGORIES } from '$lib/constants.js';
 
 	const { data } = $props();
 	const { transaction } = data;
@@ -36,6 +37,14 @@
 	$form.type = transaction[0].type;
 	$form.amount = transaction[0].amount;
 	$form.currency = transaction[0].currency;
+	$form.category = transaction[0].category || null;
+
+	// Clear category when switching to income
+	$effect(() => {
+		if ($form.type === 'income') {
+			$form.category = null;
+		}
+	});
 
 	let initialDate = new CalendarDate(
 		dateObj.getFullYear(),
@@ -98,6 +107,31 @@
 					</small>
 				</div>
 			</div>
+
+			{#if $form.type === 'expense'}
+				<div class="space-y-2">
+					<label for="category" class="text-sm text-gray-300">Category</label>
+
+					<Select.Root type="single" name="category" id="category" bind:value={$form.category}>
+						<Select.Trigger
+							class="p-2 w-full text-gray-100 capitalize rounded border border-gray-700 transition-colors appearance-none outline-none focus:ring-offset-0 md:p-3 bg-footerheader focus:border-primary"
+							>{$form.category || 'Select category'}</Select.Trigger
+						>
+						<Select.Content>
+							{#each EXPENSE_CATEGORIES as cat}
+								<Select.Item value={cat.value}>{cat.label}</Select.Item>
+							{/each}
+						</Select.Content>
+					</Select.Root>
+					<small class="block h-6 text-red-400">
+						{#if $errors.category}
+							{$errors.category}
+						{/if}
+					</small>
+					<input hidden bind:value={$form.category} name="category" />
+				</div>
+			{/if}
+
 			<div class="flex gap-4 items-end">
 				<div class="w-2/3">
 					<Input
