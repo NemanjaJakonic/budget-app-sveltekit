@@ -58,7 +58,7 @@ const authGuard = async ({ event, resolve }) => {
 	event.locals.user = user;
 
 	// Routes that don't require session authentication (they handle their own auth)
-	const publicRoutes = ['/login', '/register', '/api/expenses-by-category'];
+	const publicRoutes = ['/login', '/register', '/api/expenses-by-category', '/api/exchange-rates'];
 
 	if (!event.locals.session && !publicRoutes.includes(event.url.pathname)) {
 		throw redirect(303, '/login');
