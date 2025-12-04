@@ -1,6 +1,6 @@
 <script>
 	// import { enhance } from '$app/forms';
-	import { onDestroy, onMount } from 'svelte';
+	import { onDestroy, onMount, untrack } from 'svelte';
 	import Error from '$lib/components/Error.svelte';
 	import Input from '$lib/components/Input.svelte';
 
@@ -18,9 +18,11 @@
 	import { EXPENSE_CATEGORIES } from '$lib/constants.js';
 
 	let { data } = $props();
-	const { form, constraints, errors, enhance, delayed } = superForm(data.form, {
-		validators: zod(transactionSchema)
-	});
+	const { form, constraints, errors, enhance, delayed } = untrack(() =>
+		superForm(data.form, {
+			validators: zod(transactionSchema)
+		})
+	);
 
 	const df = new DateFormatter('en-GB', {
 		dateStyle: 'long'
@@ -30,7 +32,7 @@
 
 	// Clear category when switching to income
 	$effect(() => {
-		if ($form.type === 'income') {
+		if ($form.type === 'income' && $form.category !== null) {
 			$form.category = null;
 		}
 	});
