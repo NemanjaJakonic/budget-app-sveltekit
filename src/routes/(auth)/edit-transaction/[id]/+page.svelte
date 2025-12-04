@@ -41,7 +41,7 @@
 
 	// Clear category when switching to income
 	$effect(() => {
-		if ($form.type === 'income') {
+		if ($form.type === 'income' && $form.category !== null) {
 			$form.category = null;
 		}
 	});
