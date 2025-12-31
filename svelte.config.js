@@ -1,14 +1,14 @@
 // svelte.config.js
-import adapter from '@sveltejs/adapter-node';
+import adapter from '@sveltejs/adapter-netlify';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	kit: {
 		adapter: adapter({
-			out: '.dist'
+			split: true  // Recommended for Netlify Edge Functions
 		}),
 		serviceWorker: {
-			register: false // We handle registration manually in hooks.client.js
+			register: false  // Netlify handles this
 		}
 	}
 };
