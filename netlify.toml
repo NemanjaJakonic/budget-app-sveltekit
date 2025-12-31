@@ -1,0 +1,8 @@
+[build]
+  command = "npm run build"
+  publish = ".netlify/static"
+
+[functions]
+  included_files = ["node_modules/**"]
+  directory = ".netlify/functions-internal"
+
