@@ -5,7 +5,7 @@ import adapter from '@sveltejs/adapter-node';
 const config = {
 	kit: {
 		adapter: adapter({
-			out: '.dist'
+			out: 'build'
 		}),
 		serviceWorker: {
 			register: false // We handle registration manually in hooks.client.js
